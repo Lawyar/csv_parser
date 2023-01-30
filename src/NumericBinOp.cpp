@@ -1,17 +1,21 @@
 #include <NumericBinOp.hpp>
 #include <NumericCell.hpp>
 
+#include <memory>
+
 namespace csv {
-    NumericBinOp::NumericBinOp(const NumericCell& lhs, const NumericCell& rhs, BinOp_T opType)
-        : BinOp(opType),
-          lhs_(std::make_unique<NumericCell>(lhs)),
-          rhs_(std::make_unique<NumericCell>(rhs))
+    NumericBinOp::NumericBinOp(const NumericCell& lhs,
+                               const NumericCell& rhs,
+                               NumericOp_T opType)
+        : lhs_(std::make_unique<NumericCell>(lhs)),
+          rhs_(std::make_unique<NumericCell>(rhs)),
+          opType_(opType)
     { }
 
     NumericBinOp::NumericBinOp(const NumericBinOp & rhs)
-        : BinOp(rhs.opType_),
-          lhs_(std::make_unique<NumericCell>(*rhs.lhs_)),
-          rhs_(std::make_unique<NumericCell>(*rhs.rhs_))
+        : lhs_(std::make_unique<NumericCell>(*rhs.lhs_)),
+          rhs_(std::make_unique<NumericCell>(*rhs.rhs_)),
+          opType_(rhs.opType_)
     { }
 
     NumericCell NumericBinOp::GetLhs() const noexcept {
@@ -30,18 +34,26 @@ namespace csv {
         rhs_ = std::make_unique<NumericCell>(newRhs);
     }
 
+    NumericOp_T NumericBinOp::GetOpType() const noexcept {
+        return opType_;
+    }
+
+    void NumericBinOp::SetOpType(NumericOp_T opType) noexcept {
+        opType_ = opType;
+    }
+
     std::unique_ptr<Cell> NumericBinOp::Evaluate() const {
         switch (opType_) {
-        case BinOp_T::ADD: {
+        case NumericOp_T::ADD: {
             return std::make_unique<NumericCell>(*lhs_ + *rhs_);
         }
-        case BinOp_T::SUB: {
+        case NumericOp_T::SUB: {
             return std::make_unique<NumericCell>(*lhs_ - *rhs_);
         }
-        case BinOp_T::MUL: {
+        case NumericOp_T::MUL: {
             return std::make_unique<NumericCell>(*lhs_ * *rhs_);
         }
-        case BinOp_T::DIV: {
+        case NumericOp_T::DIV: {
             return std::make_unique<NumericCell>(*lhs_ / *rhs_);
         }
         }

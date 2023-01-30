@@ -5,12 +5,12 @@
 namespace csv {
     Cell::~Cell() { }
 
-    bool Cell::operator==(const Cell& rhs) const {
-        return typeid(*this) == typeid(rhs) && IsEqual(rhs);
+    bool operator==(const Cell& lhs, const Cell& rhs) {
+        return typeid(lhs) == typeid(rhs) && lhs.IsEqual(rhs);
     }
 
-    bool Cell::operator!=(const Cell& rhs) const {
-        return !(*this == rhs);
+    bool operator!=(const Cell& lhs, const Cell& rhs) {
+        return !(lhs == rhs);
     }
 
 }

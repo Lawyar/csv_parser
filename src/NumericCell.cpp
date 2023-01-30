@@ -1,70 +1,65 @@
 #include <NumericCell.hpp>
 
+#include <compare>
+#include <cmath>
 #include <limits>
-#include <typeinfo>
 
 namespace csv {
-    NumericCell::NumericCell(double CellVal) : cellVal_(CellVal) { }
+    NumericCell::NumericCell(double CellVal) noexcept : cellVal_(CellVal) { }
 
-    double NumericCell::GetVal() const { return cellVal_; }
-    void NumericCell::SetVal(double NewVal) { cellVal_ = NewVal; }
+    double NumericCell::GetVal() const noexcept { return cellVal_; }
+    void NumericCell::SetVal(double NewVal) noexcept { cellVal_ = NewVal; }
 
-    NumericCell& NumericCell::operator+=(const NumericCell& rhs) {
+    NumericCell& NumericCell::operator+=(const NumericCell& rhs) noexcept {
         cellVal_ += rhs.cellVal_;
         return *this;
     }
 
-    NumericCell& NumericCell::operator-=(const NumericCell& rhs) {
+    NumericCell& NumericCell::operator-=(const NumericCell& rhs) noexcept {
         cellVal_ -= rhs.cellVal_;
         return *this;
     }
 
-    NumericCell& NumericCell::operator*=(const NumericCell& rhs) {
+    NumericCell& NumericCell::operator*=(const NumericCell& rhs) noexcept {
         cellVal_ *= rhs.cellVal_;
         return *this;
     }
 
-    NumericCell& NumericCell::operator/=(const NumericCell& rhs) {
+    NumericCell& NumericCell::operator/=(const NumericCell& rhs) noexcept {
         cellVal_ /= rhs.cellVal_;
         return *this;
     }
 
     bool NumericCell::IsEqual(const Cell& rhs) const {
-        try {
-            const auto& rhsObj = dynamic_cast<const NumericCell&>(rhs);
-            return fabs(cellVal_ - rhsObj.cellVal_) < std::numeric_limits<double>::epsilon();
-        }
-        catch (std::bad_cast&) {
-            return false;
-        }
+        return fabs(cellVal_ - static_cast<const NumericCell&>(rhs).cellVal_)
+               < std::numeric_limits<double>::epsilon();
     }
 
-    NumericCell* NumericCell::Clone() const {
-        return new NumericCell{ *this };
+    NumericCell::operator double() const noexcept {
+        return cellVal_;
     }
 
     auto NumericCell::operator<=>(const NumericCell& rhs) const {
         return cellVal_ <=> rhs.cellVal_;
     }
 
-    NumericCell operator+(const NumericCell& rhs, const NumericCell& lhs) {
+    NumericCell operator+(const NumericCell& lhs, const NumericCell& rhs) noexcept {
         NumericCell tmp = lhs;
-        return tmp += lhs;
+        return tmp += rhs;
     }
 
-    NumericCell operator-(const NumericCell& rhs, const NumericCell& lhs) {
+    NumericCell operator-(const NumericCell& lhs, const NumericCell& rhs) noexcept {
         NumericCell tmp = lhs;
-        return tmp -= lhs;
+        return tmp -= rhs;
     }
 
-    NumericCell operator*(const NumericCell& rhs, const NumericCell& lhs) {
+    NumericCell operator*(const NumericCell& lhs, const NumericCell& rhs) noexcept {
         NumericCell tmp = lhs;
-        return tmp *= lhs;
+        return tmp *= rhs;
     }
 
-    NumericCell operator/(const NumericCell& rhs, const NumericCell& lhs) {
+    NumericCell operator/(const NumericCell& lhs, const NumericCell& rhs) noexcept {
         NumericCell tmp = lhs;
-        return tmp /= lhs;
+        return tmp /= rhs;
     }
-
 }

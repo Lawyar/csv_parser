@@ -5,13 +5,23 @@
 namespace csv {
     StrCell::StrCell(std::string&& cellVal) : cellVal_(std::move(cellVal)) { }
 
-    StrCell& StrCell::operator+=(const StrCell& rhs) {
-        cellVal_.append(rhs.cellVal_);
+    StrCell::StrCell(const StrCell& rhs) : cellVal_(rhs.cellVal_) { }
+
+    StrCell::StrCell(StrCell&& rhs) noexcept : cellVal_(std::move(rhs.cellVal_)) { }
+
+    StrCell& StrCell::operator=(StrCell&& rhs) noexcept {
+        cellVal_ = std::move(rhs.cellVal_);
         return *this;
     }
 
-    auto StrCell::operator<=>(const StrCell& rhs) const {
-        return cellVal_ <=> rhs.cellVal_;
+    StrCell& StrCell::operator=(const StrCell& rhs) {
+        cellVal_ = rhs.cellVal_;
+        return *this;
+    }
+
+    StrCell& StrCell::operator+=(const StrCell& rhs) {
+        cellVal_.append(rhs.cellVal_);
+        return *this;
     }
 
     std::string StrCell::GetVal() const { return cellVal_; }
@@ -19,13 +29,7 @@ namespace csv {
     void StrCell::SetVal(std::string&& newVal) { cellVal_ = std::move(newVal); }
 
     bool StrCell::IsEqual(const Cell& rhs) const {
-        try {
-            const auto& rhsObj = dynamic_cast<const StrCell&>(rhs);
-            return cellVal_ == rhsObj.cellVal_;
-        }
-        catch (std::bad_cast&) {
-            return false;
-        }
+        return cellVal_ == static_cast<const StrCell&>(rhs).cellVal_;
     }
 
     StrCell operator+(const StrCell& lhs, const StrCell& rhs) {

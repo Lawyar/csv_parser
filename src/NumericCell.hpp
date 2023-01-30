@@ -1,37 +1,34 @@
 #pragma once
 
-#include <Cell.hpp>
-
-#include <compare>
+#include <CellCRTP.hpp>
 
 namespace csv {
-    class NumericCell final : public Cell {
+    class NumericCell final : public CellCRTP<NumericCell> {
     private:
         double cellVal_;
     public:
-        NumericCell(double CellVal);
+        NumericCell(double CellVal) noexcept;
 
-        [[nodiscard]] double GetVal() const;
-        void SetVal(double NewVal);
+        [[nodiscard]] double GetVal() const noexcept;
+        void SetVal(double NewVal) noexcept;
 
-        NumericCell& operator+=(const NumericCell& rhs);
-        NumericCell& operator-=(const NumericCell& rhs);
-        NumericCell& operator*=(const NumericCell& rhs);
-        NumericCell& operator/=(const NumericCell& rhs);
+        NumericCell& operator+=(const NumericCell& rhs) noexcept;
+        NumericCell& operator-=(const NumericCell& rhs) noexcept;
+        NumericCell& operator*=(const NumericCell& rhs) noexcept;
+        NumericCell& operator/=(const NumericCell& rhs) noexcept;
 
         auto operator<=>(const NumericCell& rhs) const;
 
         [[nodiscrad]] bool IsEqual(const Cell& rhs) const override;
 
-        [[nodiscard]] NumericCell* Clone() const override;
+        operator double() const noexcept;
+
+        ~NumericCell() {}
     };
 
-    NumericCell operator+(const NumericCell& rhs, const NumericCell& lhs);
-    NumericCell operator-(const NumericCell& rhs, const NumericCell& lhs);
-    NumericCell operator*(const NumericCell& rhs, const NumericCell& lhs);
-    NumericCell operator/(const NumericCell& rhs, const NumericCell& lhs);
-
-    bool operator==(const NumericCell& lhs, const NumericCell& rhs);
-    bool operator!=(const NumericCell& lhs, const NumericCell& rhs);
+    NumericCell operator+(const NumericCell& rhs, const NumericCell& lhs) noexcept;
+    NumericCell operator-(const NumericCell& rhs, const NumericCell& lhs) noexcept;
+    NumericCell operator*(const NumericCell& rhs, const NumericCell& lhs) noexcept;
+    NumericCell operator/(const NumericCell& rhs, const NumericCell& lhs) noexcept;
 
 }  // namespace csv

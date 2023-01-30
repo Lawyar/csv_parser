@@ -1,27 +1,27 @@
 #pragma once
 
-#include <Cell.hpp>
+#include <CellCRTP.hpp>
 
 #include <string>
 
 namespace csv {
-    class StrCell final : public Cell {
+    class StrCell final : public CellCRTP<StrCell> {
     private:
         std::string cellVal_;
     public:
         StrCell(std::string&& cellVal);
+        StrCell(const StrCell& rhs);
+        StrCell(StrCell&& rhs) noexcept;
+
+        StrCell& operator=(StrCell&& rhs) noexcept;
+        StrCell& operator=(const StrCell& rhs);
 
         [[nodiscard]] std::string GetVal() const;
         void SetVal(std::string&& newVal);
 
         StrCell& operator+=(const StrCell& rhs);
 
-        auto operator<=>(const StrCell& rhs) const;
-
         [[nodiscrad]] bool IsEqual(const Cell& rhs) const override;
-
-        [[nodiscard]] StrCell* Clone() const override;
-
     };
 
     StrCell operator+(const StrCell& lhs, const StrCell& rhs);

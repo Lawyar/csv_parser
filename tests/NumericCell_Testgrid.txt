@@ -1,0 +1,55 @@
+#include <gtest/gtest.h>
+
+#include <NumericCell.hpp>
+
+using csv::NumericCell;
+
+TEST(NumericCell_Test, ValueCTor) {
+    constexpr double initVal = 32.;
+    const NumericCell nCell(initVal);
+    EXPECT_DOUBLE_EQ(nCell.GetVal(), initVal);
+}
+
+TEST(NumericCell_Test, CopyCTor) {
+    constexpr double initVal = -900.;
+    const NumericCell nCell1(initVal);
+    const NumericCell nCell2 = nCell1;
+    EXPECT_TRUE(nCell2 == nCell1);
+}
+
+TEST(NumericCell_Test, CheckIsEqualFalse) {
+    constexpr double initVal1 = -2900.;
+    constexpr double initVal2 = 12900.;
+    const NumericCell nC1(initVal1);
+    const NumericCell nC2(initVal2);
+    EXPECT_FALSE(nC1.IsEqual(nC2));
+}
+
+TEST(NumericCell_Test, CheckIsEqualTrue) {
+    constexpr double initVal = 58934.;
+    const NumericCell nC1(initVal);
+    const NumericCell nC2(initVal);
+    EXPECT_TRUE(nC1 == nC2);
+}
+
+TEST(NumericCell_Test, CheckIsEqualBaseFalse) {
+    constexpr double initVal1 = 473598;
+    constexpr double initVal2 = 58934.;
+    const csv::Cell* nBC1 = new NumericCell(initVal1);
+    const csv::Cell* nBC2 = new NumericCell(initVal2);
+    EXPECT_TRUE(*nBC1 != *nBC2);
+}
+
+TEST(NumericCell_Test, CheckIsEqualBaseTrue) {
+    constexpr double initVal1 = 4356473598;
+    constexpr double initVal2 = 4356473598;
+    const csv::Cell* nBC1 = new NumericCell(initVal1);
+    const csv::Cell* nBC2 = new NumericCell(initVal2);
+    EXPECT_TRUE(nBC1->IsEqual(*nBC2));
+}
+
+TEST(NumericCell_Test, CheckClone) {
+    csv::Cell* cell = new NumericCell(1024);
+    auto cloneCell = cell->Clone();
+    EXPECT_TRUE(*cloneCell == *cell);
+}

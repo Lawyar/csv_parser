@@ -65,8 +65,4 @@ namespace csv {
         return *lhs_ == *rhsVal.lhs_ && *rhs_ == *rhsVal.rhs_ && opType_ == rhsVal.opType_;
     }
 
-    std::unique_ptr<Cell> NumericBinOp::Clone() const {
-        return std::make_unique<NumericBinOp>(*this);
-    }
-
 }  // namespace csv

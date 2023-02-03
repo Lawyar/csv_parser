@@ -7,7 +7,7 @@ using csv::NumericCell;
 using csv::NumericOp_T;
 
 TEST(NumericNumericOp_Test, TestCTor) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::ADD;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -18,7 +18,7 @@ TEST(NumericNumericOp_Test, TestCTor) {
 }
 
 TEST(NumericNumericOp_Test, TestEq) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::ADD, invOpT = NumericOp_T::DIV;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -29,7 +29,7 @@ TEST(NumericNumericOp_Test, TestEq) {
 }
 
 TEST(NumericNumericOp_Test, TestAdd) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::ADD;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -40,7 +40,7 @@ TEST(NumericNumericOp_Test, TestAdd) {
 }
 
 TEST(NumericNumericOp_Test, TestSub) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::SUB;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -51,7 +51,7 @@ TEST(NumericNumericOp_Test, TestSub) {
 }
 
 TEST(NumericNumericOp_Test, TestMul) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::MUL;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -62,7 +62,7 @@ TEST(NumericNumericOp_Test, TestMul) {
 }
 
 TEST(NumericNumericOp_Test, TestDiv) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::DIV;
     const NumericBinOp binOp(lhs, rhs, opT);
@@ -73,7 +73,7 @@ TEST(NumericNumericOp_Test, TestDiv) {
 }
 
 TEST(NumericNumericOp_Test, TestClone) {
-    constexpr double lhsVal = 32., rhsVal = 7.;
+    constexpr int lhsVal = 32, rhsVal = 7;
     const NumericCell lhs(lhsVal), rhs(rhsVal);
     constexpr NumericOp_T opT = NumericOp_T::DIV;
     const NumericBinOp binOp(lhs, rhs, opT);

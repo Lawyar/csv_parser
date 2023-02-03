@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BinOp.hpp>
+#include <BinOpCRTP.hpp>
 #include <NumericCell.hpp>
 
 #include <memory>
@@ -13,7 +13,7 @@ namespace csv {
         DIV
     };
 
-    class NumericBinOp final : public BinOp {
+    class NumericBinOp final : public BinOpCRTP<NumericBinOp> {
     private:
         std::unique_ptr<NumericCell> lhs_, rhs_;
         NumericOp_T opType_;
@@ -34,8 +34,6 @@ namespace csv {
         [[nodiscard]] std::unique_ptr<Cell> Evaluate() const override;
 
         [[nodiscard]] bool IsEqual(const Cell& rhs) const override;
-
-        [[nodiscard]] std::unique_ptr<Cell> Clone() const override;
     };
 }
 

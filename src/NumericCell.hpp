@@ -5,12 +5,12 @@
 namespace csv {
     class NumericCell final : public CellCRTP<NumericCell> {
     private:
-        double cellVal_;
+        int cellVal_;
     public:
-        NumericCell(double CellVal) noexcept;
+        NumericCell(int CellVal) noexcept;
 
-        [[nodiscard]] double GetVal() const noexcept;
-        void SetVal(double NewVal) noexcept;
+        [[nodiscard]] int GetVal() const noexcept;
+        void SetVal(int NewVal) noexcept;
 
         NumericCell& operator+=(const NumericCell& rhs) noexcept;
         NumericCell& operator-=(const NumericCell& rhs) noexcept;
@@ -26,9 +26,9 @@ namespace csv {
         ~NumericCell() {}
     };
 
-    NumericCell operator+(const NumericCell& rhs, const NumericCell& lhs) noexcept;
-    NumericCell operator-(const NumericCell& rhs, const NumericCell& lhs) noexcept;
-    NumericCell operator*(const NumericCell& rhs, const NumericCell& lhs) noexcept;
-    NumericCell operator/(const NumericCell& rhs, const NumericCell& lhs) noexcept;
+    NumericCell operator+(const NumericCell& lhs, const NumericCell& rhs) noexcept;
+    NumericCell operator-(const NumericCell& lhs, const NumericCell& rhs) noexcept;
+    NumericCell operator*(const NumericCell& lhs, const NumericCell& rhs) noexcept;
+    NumericCell operator/(const NumericCell& lhs, const NumericCell& rhs) noexcept;
 
 }  // namespace csv

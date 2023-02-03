@@ -37,11 +37,6 @@ namespace csv {
         return IsEqual(rhs);
     }
 
-    StrCell& StrCell::operator+=(const StrCell& rhs) {
-        cellVal_.append(rhs.cellVal_);
-        return *this;
-    }
-
     std::string StrCell::GetVal() const { return cellVal_; }
 
     void StrCell::SetVal(std::string&& newVal) noexcept { cellVal_ = std::move(newVal); }
@@ -50,8 +45,4 @@ namespace csv {
         return cellVal_ == static_cast<const StrCell&>(rhs).cellVal_;
     }
 
-    StrCell operator+(const StrCell& lhs, const StrCell& rhs) {
-        StrCell tmp = lhs;
-        return tmp += rhs;
-    }
 }

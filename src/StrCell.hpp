@@ -24,10 +24,6 @@ namespace csv {
         [[nodiscard]] std::string GetVal() const;
         void SetVal(std::string&& newVal) noexcept;
 
-        StrCell& operator+=(const StrCell& rhs);
-
         [[nodiscard]] bool IsEqual(const Cell& rhs) const override;
     };
-
-    StrCell operator+(const StrCell& lhs, const StrCell& rhs);
 }  // namespace csv

@@ -5,10 +5,10 @@
 #include <limits>
 
 namespace csv {
-    NumericCell::NumericCell(double CellVal) noexcept : cellVal_(CellVal) { }
+    NumericCell::NumericCell(int CellVal) noexcept : cellVal_(CellVal) { }
 
-    double NumericCell::GetVal() const noexcept { return cellVal_; }
-    void NumericCell::SetVal(double NewVal) noexcept { cellVal_ = NewVal; }
+    int NumericCell::GetVal() const noexcept { return cellVal_; }
+    void NumericCell::SetVal(int NewVal) noexcept { cellVal_ = NewVal; }
 
     NumericCell& NumericCell::operator+=(const NumericCell& rhs) noexcept {
         cellVal_ += rhs.cellVal_;
@@ -31,8 +31,7 @@ namespace csv {
     }
 
     bool NumericCell::IsEqual(const Cell& rhs) const {
-        return fabs(cellVal_ - static_cast<const NumericCell&>(rhs).cellVal_)
-               < std::numeric_limits<double>::epsilon();
+        return cellVal_ == static_cast<const NumericCell&>(rhs).cellVal_;
     }
 
     NumericCell::operator double() const noexcept {

@@ -34,25 +34,25 @@ TEST(Detail_Test, genDefaultOutName_Default) {
 }
 
 TEST(Detail_Test, genDefaultOutName_DefaultOnEmpty) {
-    fs::path tPath("");
-    fs::path expected("_out.txt");
+    const fs::path tPath("");
+    const fs::path expected("_out.txt");
     EXPECT_EQ(expected, genDefaultOutName(tPath));
 }
 
 TEST(Detail_Test, genDefaultOutName_OnEmpty) {
-    fs::path tPath("");
-    std::string postfix = "brat"s, extension = "sestra"s;
-    std::string expectedStr = postfix + '.' + extension;
-    fs::path expected(expectedStr);
+    const fs::path tPath("");
+    const std::string postfix = "brat"s, extension = "sestra"s;
+    const std::string expectedStr = postfix + '.' + extension;
+    const fs::path expected(expectedStr);
     EXPECT_EQ(expected, genDefaultOutName(tPath, postfix, extension));
 }
 
 #ifdef _WIN32
 TEST(Detail_Test, genDefaultOutName_OnWinPath) {
-    fs::path tPath("D:\\Puffy\\");
-    std::string postfix = "brat"s, extension = "sestra"s;
-    std::string expectedStr = tPath.string() + postfix + '.' + extension;
-    fs::path expected(expectedStr);
+    const fs::path tPath("D:\\Puffy\\");
+    const std::string postfix = "brat"s, extension = "sestra"s;
+    const std::string expectedStr = tPath.string() + postfix + '.' + extension;
+    const fs::path expected(expectedStr);
     EXPECT_EQ(expected, genDefaultOutName(tPath, postfix, extension));
 }
 #else
@@ -69,9 +69,9 @@ TEST(Detail_Test, genDefaultOutName_OnSpecPath) {
     fs::path tPath("chemical");
     tPath /= "subdir";
     tPath /= "file";
-    std::string postfix = "sulfat"s, extension = "zinc"s;
-    std::string expectedStr = tPath.string() + postfix + '.' + extension;
-    fs::path expected(expectedStr);
+    const std::string postfix = "sulfat"s, extension = "zinc"s;
+    const std::string expectedStr = tPath.string() + postfix + '.' + extension;
+    const fs::path expected(expectedStr);
     EXPECT_EQ(expected, genDefaultOutName(tPath, postfix, extension));
 }
 

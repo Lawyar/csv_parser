@@ -7,22 +7,17 @@
 namespace {
     namespace fs = std::filesystem;
     using strsize_t = std::string::size_type;
+}
 
-    struct RowData {
-        size_t index_;
-        std::vector<std::string> data_;
-    };
-
-    // @todo put inside class because of rowLen invariant
-    RowData parseRow(const std::string& row, strsize_t rowLen) {
+namespace csv {
+    CSVFile::RowData::RowData(const std::string& row, size_t wordsCount) {
         const strsize_t realLen = std::count(row.begin(), row.end(), ',');
-        if (realLen != rowLen) {
+        if (realLen != wordsCount) {
             // @todo throw InconsistentFile(Identical row length)
         }
-
-        size_t rowInd{};
+        
         try {
-            rowInd = std::stoll(row.substr(','));
+            index_ = std::stoll(row.substr(','));
         }
         catch (const std::invalid_argument& ex) {
             // @todo throw InconsistentFile(Row ind should be unsigned integer type)
@@ -31,14 +26,8 @@ namespace {
             // @todo throw InconsistentFile(Too big integer)
         }
 
-        const std::vector<std::string> splittedRow =
-            detail_::strSplit(row.substr(rowInd, row.length() - rowInd), ',', realLen);
-
-        return RowData{ rowInd, splittedRow};
+        data_ = detail_::strSplit(row.substr(index_, row.length() - index_), ',', realLen);
     }
-}
-
-namespace csv {
 
     CSVFile::CSVFile(const fs::path& inputFile, const fs::path& outFile) {
         // init file
@@ -65,4 +54,9 @@ namespace csv {
 
     CSVFile::CSVFile(const fs::path& filePath)
     : CSVFile(filePath, detail_::genDefaultOutName(filePath)) { }
+
+    CSVFile::RowData CSVFile::parseRow(const std::string& row) const {
+        return RowData(row, colNames_.size());
+    }
+    
 }  // namespace csv

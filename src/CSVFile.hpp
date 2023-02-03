@@ -19,6 +19,15 @@ namespace csv {
         // processHeader parses column names and counts them
         void processHeader();
 
+        struct RowData {
+            size_t index_ = 0;
+            std::vector<std::string> data_;
+
+            RowData(const std::string& row, size_t wordsCount);
+        };
+
+        RowData parseRow(const std::string& row) const;
+
     public:
 
         CSVFile(const std::filesystem::path& inputFile,

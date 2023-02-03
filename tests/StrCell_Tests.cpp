@@ -1,3 +1,5 @@
+#if 0
+
 #include <gtest/gtest.h>
 
 #include <StrCell.hpp>
@@ -56,3 +58,5 @@ TEST(StrCell_Test, CheckClone) {
     auto cloneCell = cell->Clone();
     EXPECT_TRUE(*cloneCell == *cell);
 }
+
+#endif

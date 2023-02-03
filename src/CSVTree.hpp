@@ -8,7 +8,7 @@
 
 namespace csv {
     class CSVTree {
-        using TreeType = std::unordered_multimap<std::string, std::unordered_multimap<int, Cell>>;
+        using TreeType = std::unordered_map<std::string, std::unordered_map<int, Cell>>;
     private:
         TreeType tree_;
         bool toLazyEval_;

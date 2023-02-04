@@ -12,7 +12,8 @@ namespace csv {
         // размер заголовка должен быть на единицу больше размера каждой записи,
         // так как заголовок содержит название столбца индексов
         std::vector<std::string> header_;
-        std::unordered_map<size_t, std::vector<std::string>> data_;
+        // in fact rows_ stores csv::Row 
+        std::unordered_map<size_t, std::vector<std::string>> rows_;
 
         [[nodiscard]] bool isConsistent() const noexcept;
 
@@ -29,6 +30,8 @@ namespace csv {
         std::string& Get(size_t rowInd, const std::string& colName);
 
         std::string Get(size_t rowInd, const std::string& colName) const;
+
+        void PushRow()
 
         void Print() const;
     };

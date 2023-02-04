@@ -8,25 +8,29 @@
 
 namespace csv {
     class CSVTree {
-        using TreeType = std::unordered_map<std::string, std::unordered_map<int, Cell>>;
     private:
-        TreeType tree_;
-        bool toLazyEval_;
+        // размер заголовка должен быть на единицу больше размера каждой записи,
+        // так как заголовок содержит название столбца индексов
+        std::vector<std::string> header_;
+        std::unordered_map<size_t, std::vector<std::string>> data_;
+
+        [[nodiscard]] bool isConsistent() const noexcept;
+
+        [[nodiscard]] size_t getHeaderIndex(const std::string& colName) const;
 
     public:
-        CSVTree(const std::vector<std::string>& colNames);
 
-        void PushCell(const std::string& colName, const Cell& cell);
+        CSVTree(const std::vector<std::string>& header,
+                const std::unordered_map<size_t, std::vector<std::string>>& data);
 
-        void InsertCol(const std::string& colName, const std::vector<Cell>& colCells);
+        CSVTree(std::vector<std::string>&& header,
+                std::unordered_map<size_t, std::vector<std::string>>&& data);
 
-        void RemoveCell(const std::string& colName, const Cell& cell);
+        std::string& Get(size_t rowInd, const std::string& colName);
 
-        void RemoveCol(const std::string& colName);
+        std::string Get(size_t rowInd, const std::string& colName) const;
 
-        void EvaluateAll();
-
-        void Evaluate(const std::string& colName, const Cell& cell);
+        void Print() const;
     };
 
 }  // namespace csv

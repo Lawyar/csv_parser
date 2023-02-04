@@ -4,10 +4,8 @@
 #include <fstream>
 #include <set>
 
-namespace {
-    namespace fs = std::filesystem;
-    using strsize_t = std::string::size_type;
-}
+namespace fs = std::filesystem;
+using strsize_t = std::string::size_type;
 
 namespace csv {
     CSVFile::RowData::RowData(const std::string& row, size_t wordsCount) {
@@ -34,8 +32,11 @@ namespace csv {
         if (!(exists(inputFile) || is_regular_file(inputFile))) {
             throw std::runtime_error("invalid path");
         }
+
         std::ifstream file(inputFile);
-        if (!file.good()) { // @todo overhead?
+        // we need to check this because of the possible race condition or file inaccessibility
+        // https://stackoverflow.com/questions/36022189/what-guarantee-do-i-have-after-is-regular-file
+        if (!file.good()) {
             throw std::runtime_error("invalid file");
         }
 

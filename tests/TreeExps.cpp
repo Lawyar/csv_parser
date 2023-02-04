@@ -1,13 +1,20 @@
 #include <gtest/gtest.h>
 
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
+#include <CSVTree.hpp>
 
-using Row = std::unordered_multimap<std::string, std::string>;
-using Tree = std::map<size_t, Row>;
+using namespace std::string_literals;
 
+#if 0
+using Row = std::unordered_map<std::string, std::string>;
+using Tree = std::unordered_map<size_t, Row>;
+
+class CSVRow {
+    size_t index_;
+    std::vector<std::string> rowData_;
+};
+#endif 
+
+#if 0
 TEST(Tree_Exp, Indexing) {
     Tree t;
     std::string cN1 = " ", cN2 = "A", cN3 = "B";
@@ -31,5 +38,21 @@ TEST(Tree_Exp, Indexing) {
         }
         std::cout << std::endl;
     }
+}
+#endif
+
+using csv::CSVTree;
+
+TEST(Tree_Exp, CSVTree_EX) {
+    std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };
+    std::vector<std::string> r1{ "LL"s, "LEV"s, "TU"s };
+    std::vector<std::string> r2{ "VM"s, "EL"s, "AL"s };
+    std::vector<std::string> r3{ "LOW"s, "VIR"s, "MAC"s };
+
+    std::unordered_map<size_t, std::vector<std::string>> treeData = { {1, r1}, {2, r2}, {3, r3} };
+
+    CSVTree tree{ header, treeData };
+
+    tree.Print();
 
 }

@@ -31,9 +31,9 @@ namespace csv {
         [[nodiscard]] NumericOp_T GetOpType() const noexcept;
         void SetOpType(NumericOp_T opType) noexcept;
 
-        [[nodiscard]] std::unique_ptr<Cell> Evaluate() const override;
+        [[nodiscard]] std::unique_ptr<CellAbstract> Evaluate() const override;
 
-        [[nodiscard]] bool IsEqual(const Cell& rhs) const override;
+        [[nodiscard]] bool IsEqual(const CellAbstract& rhs) const override;
     };
 }
 

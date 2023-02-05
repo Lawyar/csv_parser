@@ -1,11 +1,11 @@
 #pragma once
 
-#include <CellCRTP.hpp>
+#include <Cell.hpp>
 
 #include <string>
 
 namespace csv {
-    class StrCell final : public CellCRTP<StrCell> {
+    class StrCell final : public Cell<StrCell> {
     private:
         std::string cellVal_;
     public:
@@ -24,6 +24,6 @@ namespace csv {
         [[nodiscard]] std::string GetVal() const;
         void SetVal(std::string&& newVal) noexcept;
 
-        [[nodiscard]] bool IsEqual(const Cell& rhs) const override;
+        [[nodiscard]] bool IsEqual(const CellAbstract& rhs) const override;
     };
 }  // namespace csv

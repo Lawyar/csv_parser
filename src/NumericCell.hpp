@@ -1,9 +1,9 @@
 #pragma once
 
-#include <CellCRTP.hpp>
+#include <Cell.hpp>
 
 namespace csv {
-    class NumericCell final : public CellCRTP<NumericCell> {
+    class NumericCell final : public Cell<NumericCell> {
     private:
         int cellVal_;
     public:
@@ -19,7 +19,7 @@ namespace csv {
 
         auto operator<=>(const NumericCell& rhs) const;
 
-        [[nodiscrad]] bool IsEqual(const Cell& rhs) const override;
+        [[nodiscrad]] bool IsEqual(const CellAbstract& rhs) const override;
 
         operator double() const noexcept;
 

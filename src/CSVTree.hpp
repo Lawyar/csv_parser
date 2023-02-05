@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <Cell.hpp>
+#include <CellAbstract.hpp>
 #include <CSVRow.hpp>
 
 #include <string>

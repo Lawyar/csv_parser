@@ -42,7 +42,7 @@ namespace csv {
         opType_ = opType;
     }
 
-    std::unique_ptr<Cell> NumericBinOp::Evaluate() const {
+    std::unique_ptr<CellAbstract> NumericBinOp::Evaluate() const {
         switch (opType_) {
         case NumericOp_T::ADD: {
             return std::make_unique<NumericCell>(*lhs_ + *rhs_);
@@ -60,7 +60,7 @@ namespace csv {
         return nullptr;
     }
 
-    bool NumericBinOp::IsEqual(const Cell& rhs) const {
+    bool NumericBinOp::IsEqual(const CellAbstract& rhs) const {
         const NumericBinOp& rhsVal = static_cast<const NumericBinOp&>(rhs);
         return *lhs_ == *rhsVal.lhs_ && *rhs_ == *rhsVal.rhs_ && opType_ == rhsVal.opType_;
     }

@@ -30,7 +30,7 @@ namespace csv {
         return *this;
     }
 
-    bool NumericCell::IsEqual(const Cell& rhs) const {
+    bool NumericCell::IsEqual(const CellAbstract& rhs) const {
         return cellVal_ == static_cast<const NumericCell&>(rhs).cellVal_;
     }
 

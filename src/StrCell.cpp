@@ -41,7 +41,7 @@ namespace csv {
 
     void StrCell::SetVal(std::string&& newVal) noexcept { cellVal_ = std::move(newVal); }
 
-    bool StrCell::IsEqual(const Cell& rhs) const {
+    bool StrCell::IsEqual(const CellAbstract& rhs) const {
         return cellVal_ == static_cast<const StrCell&>(rhs).cellVal_;
     }
 

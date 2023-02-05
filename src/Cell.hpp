@@ -1,17 +1,12 @@
 #pragma once
 
-#include <memory>
+#include <CellAbstract.hpp>
 
 namespace csv {
-    struct Cell {
-        virtual ~Cell();
-
-        [[nodiscard]] virtual bool IsEqual(const Cell& rhs) const = 0;
-
-        [[nodiscard]] virtual std::unique_ptr<Cell> Clone() const = 0;
+    template <typename Derived>
+    class Cell : public CellAbstract {
+        [[nodiscard]] std::unique_ptr<CellAbstract> Clone() const override {
+            return std::make_unique<Derived>(static_cast<const Derived&>(*this));
+        }
     };
-
-    bool operator==(const Cell& lhs, const Cell& rhs);
-    bool operator!=(const Cell& lhs, const Cell& rhs);
-
-}  // namespace csv
+}

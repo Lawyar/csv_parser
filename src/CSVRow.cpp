@@ -26,7 +26,7 @@ namespace csv {
     CSVRow::CSVRow(const std::pair<size_t, std::vector<std::reference_wrapper<Cell>>>& rowData)
         : row_(rowData){ }
 
-    CSVRow::operator std::pair<size_t, std::vector<std::string>>() const {
+    CSVRow::operator std::pair<unsigned long long, std::vector<std::reference_wrapper<Cell>>>() const {
         return row_;
     }
 
@@ -35,22 +35,22 @@ namespace csv {
     }
 
     std::string CSVRow::operator[](size_t index) const {
-        return row_.second.at(index);
+        return row_.second.at(index).get();
     }
 
     size_t CSVRow::RowIndex() const noexcept {
         return row_.first;
     }
 
-    std::vector<std::string> CSVRow::RowCells() const {
+    std::vector<std::reference_wrapper<csv::Cell>> CSVRow::RowCells() const {
         return row_.second;
     }
 
-    std::pair<size_t, std::vector<std::string>> CSVRow::CloneRow() const {
+    std::pair<size_t, std::vector<std::reference_wrapper<Cell>>> CSVRow::CloneRow() const {
         return row_;
     }
 
-    std::pair<size_t, std::vector<std::string>>& CSVRow::Data() & {
+    std::pair<size_t, std::vector<std::reference_wrapper<Cell>>>& CSVRow::Data() & {
         return row_;
     }
 
@@ -58,12 +58,12 @@ namespace csv {
         row_.first = newIndex;
     }
 
-    void CSVRow::SetRowCells(const std::vector<std::string>& newCells) {
+    void CSVRow::SetRowCells(const std::vector<std::reference_wrapper<Cell>>& newCells) {
         CSVRow tmp({ row_.first, newCells });
         *this = std::move(tmp);
     }
 
-    void CSVRow::SetRowCells(std::vector<std::string>&& newCells) noexcept {
+    void CSVRow::SetRowCells(std::vector<std::reference_wrapper<Cell>>&& newCells) noexcept {
         CSVRow tmp({ row_.first, std::move(newCells) });
         *this = std::move(tmp);
     }

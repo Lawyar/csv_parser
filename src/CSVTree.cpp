@@ -65,7 +65,7 @@ namespace csv {
         return header_.size() - 1;
     }
 
-    std::string& CSVTree::GetCell(size_t rowInd, const std::string& colName) {
+    csv::Cell& CSVTree::GetCell(size_t rowInd, const std::string& colName) {
         // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
         assert(!colName.empty());
         // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
@@ -79,14 +79,14 @@ namespace csv {
         throw;
     }
 
-    std::string CSVTree::GetCell(size_t rowInd, const std::string& colName) const {
+    csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const {
         // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
         assert(!colName.empty());
         // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
         for (const auto& it : rows_) {
             const size_t recordInd = it.RowIndex();
             if (recordInd == rowInd) {
-                return it.RowCells().at(getHeaderIndex(colName));
+                return it.RowCells().at(getHeaderIndex(colName)).get();
             }
         }
 
@@ -127,7 +127,7 @@ namespace csv {
             std::cout << '|' << rowIt.RowIndex() << '|';
 
             for (const auto& cellIt : rowIt.RowCells()) {
-                std::cout << cellIt << '|';
+                std::cout << cellIt.get().ToString() << '|';
             }
             std::cout << std::endl;
         }

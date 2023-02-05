@@ -51,7 +51,7 @@ namespace csv {
         rowData.erase(rowData.begin());
 
         // generate std::vector<csv::Cell>
-        std::vector<std::reference_wrapper<csv::Cell>> rowCells;
+        std::vector<std::shared_ptr<csv::Cell>> rowCells;
         rowCells.reserve(rowData.size());
         for (const auto& cellStr : rowData) {
             if (cellStr[0] == '=') {
@@ -59,13 +59,13 @@ namespace csv {
                 // process BinOp
             }
             else {
-                Cell currCell(cellStr);
-                rowCells.push_back(std::ref(currCell));
+                std::shared_ptr<Cell> currCell = std::make_shared<Cell>(cellStr);
+                rowCells.push_back(currCell);
             }
         }
 
         // pushing row into the tree
-        CSVRow row{ std::move(rowCells) };
+        CSVRow row{ {rowIndex, rowCells} };
         try {
             fileTree_.PushRow(std::move(row));
         }

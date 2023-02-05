@@ -27,14 +27,14 @@ namespace csv {
         [[nodiscard]] std::string operator[](size_t index) const;
 
         [[nodiscard]] size_t RowIndex() const noexcept;
-        [[nodiscard]] std::vector<std::string> RowCells() const;
+        [[nodiscard]] std::vector<std::reference_wrapper<csv::Cell>> RowCells() const;
 
-        [[nodiscard]] std::pair<size_t, std::vector<std::string>> CloneRow() const;
-        [[nodiscard]] std::pair<size_t, std::vector<std::string>>& Data()&;
+        [[nodiscard]] std::pair<size_t, std::vector<std::reference_wrapper<Cell>>> CloneRow() const;
+        [[nodiscard]] std::pair<size_t, std::vector<std::reference_wrapper<Cell>>>& Data()&;
 
         void SetRowIndex(size_t newIndex) noexcept;
-        void SetRowCells(const std::vector<std::string>& newCells);
-        void SetRowCells(std::vector<std::string>&& newCells) noexcept;
+        void SetRowCells(const std::vector<std::reference_wrapper<Cell>>& newCells);
+        void SetRowCells(std::vector<std::reference_wrapper<Cell>>&& newCells) noexcept;
 
         [[nodiscard]] size_t Size() const noexcept;
 

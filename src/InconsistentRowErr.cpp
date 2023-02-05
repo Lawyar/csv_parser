@@ -17,6 +17,5 @@ namespace {
 namespace csv {
     // RowException
     InconsistentRowErr::InconsistentRowErr(size_t expectedWords, size_t countedWords)
-        : runtime_error(generateMessage(expectedWords, countedWords)),
-        expectedWords_(expectedWords), countedWords_(countedWords) { }
+        : runtime_error(generateMessage(expectedWords, countedWords)) { }
 }

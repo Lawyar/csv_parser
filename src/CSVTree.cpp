@@ -9,9 +9,15 @@
 
 using namespace std::string_literals;
 
+namespace {
+    bool isConsistentRow(const csv::CSVRow& row, size_t consistentSize) {
+        return consistentSize == row.Size();
+    }
+}
+
 namespace csv {
     bool CSVTree::isConsistent(const CSVRow& row) const noexcept {
-        return header_.size() - 1 == row.Size();
+        return isConsistentRow(row, header_.size() - 1);
     }
 
     size_t CSVTree::getHeaderIndex(const std::string& colName) const {
@@ -44,6 +50,21 @@ namespace csv {
         }
     }
 
+    void CSVTree::SetHeader(const std::vector<std::string>& header) {
+        size_t consistentSize = header.size() - 1;
+        for (const auto& row : rows_) {
+            if (!isConsistentRow(row, consistentSize)) {
+                throw InconsistentRowErr(header_.size() - 1, row.Size());
+            }
+        }
+
+        header_ = header;
+    }
+
+    size_t CSVTree::ConsistentSize() const {
+        return header_.size() - 1;
+    }
+
     std::string& CSVTree::GetCell(size_t rowInd, const std::string& colName) {
         // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
         assert(!colName.empty());
@@ -74,10 +95,16 @@ namespace csv {
     }
 
     void CSVTree::PushRow(const CSVRow& row) {
+        if (!isConsistent(row)) {
+            throw InconsistentRowErr(header_.size() - 1, row.Size());
+        }
         rows_.push_back(row);
     }
 
     void CSVTree::PushRow(CSVRow&& row) {
+        if (!isConsistent(row)) {
+            throw InconsistentRowErr(header_.size() - 1, row.Size());
+        }
         rows_.push_back(std::move(row));
     }
 

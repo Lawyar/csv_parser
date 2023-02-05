@@ -2,31 +2,21 @@
 
 #include <CSVTree.hpp>
 
+#include <fstream>
 #include <filesystem>
-#include <set>
 #include <string>
 
 namespace csv {
 
     class CSVFile {
     private:
-        //CSVTree fileTree_;
-        std::string header_;
-        
-        std::set<std::string> colNames_;
-        std::set<size_t> rowIndexes_;
+        CSVTree fileTree_;
+        std::ifstream iFile_;
 
         // processHeader parses column names and counts them
-        void processHeader();
+        void processHeader(std::string&& headerStr);
 
-        struct RowData {
-            size_t index_ = 0;
-            std::vector<std::string> data_;
-
-            RowData(const std::string& row, size_t wordsCount);
-        };
-
-        RowData parseRow(const std::string& row) const;
+        void parseRow(const std::string& rowStr);
 
     public:
 

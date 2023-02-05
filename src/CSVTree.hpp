@@ -22,12 +22,19 @@ namespace csv {
         [[nodiscard]] size_t getHeaderIndex(const std::string& colName) const;
 
     public:
+        CSVTree() = default;
 
         CSVTree(const std::vector<std::string>& header,
                 const std::vector<CSVRow>& data);
 
         CSVTree(std::vector<std::string>&& header,
                 std::vector<CSVRow>&& data);
+
+        void SetHeader(const std::vector<std::string>& header);
+        void SetHeader(std::vector<std::string>&& header);
+
+        // header_.size() - 1
+        size_t ConsistentSize() const;
 
         std::string& GetCell(size_t rowInd, const std::string& colName);
         std::string GetCell(size_t rowInd, const std::string& colName) const;

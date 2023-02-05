@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Cell.hpp>
+
 #include <string>
 #include <stdexcept>
 #include <vector>
@@ -9,15 +11,19 @@ namespace csv {
     class CSVRow final {
     private:
         // index and row cells
-        std::pair<size_t, std::vector<std::string>> row_;
+        std::pair<size_t, std::vector<std::reference_wrapper<Cell>>> row_;
 
     public:
+        /*CSVRow(const std::vector<std::string>& rowWithIndex);
+        CSVRow(std::vector<std::string>&& rowWithIndex);
         CSVRow(const std::pair<size_t, std::vector<std::string>>& record);
-        CSVRow(std::pair<size_t, std::vector<std::string>>&& record);
+        CSVRow(std::pair<size_t, std::vector<std::string>>&& record);*/
 
-        operator std::pair<size_t, std::vector<std::string>>() const;
+        CSVRow(const std::pair<size_t, std::vector<std::reference_wrapper<Cell>>>& rowData);
 
-        [[nodiscard]] std::string& operator[](size_t index);
+        operator std::pair<size_t, std::vector<std::reference_wrapper<Cell>>>() const;
+
+        [[nodiscard]] csv::Cell& operator[](size_t index);
         [[nodiscard]] std::string operator[](size_t index) const;
 
         [[nodiscard]] size_t RowIndex() const noexcept;

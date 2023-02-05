@@ -1,5 +1,8 @@
 #include <CSVTree.hpp>
 
+#include <InconsistentRowErr.hpp>
+
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
@@ -7,16 +10,8 @@
 using namespace std::string_literals;
 
 namespace csv {
-    bool CSVTree::isConsistent() const noexcept {
-        assert(!header_.empty());
-        const size_t consistentSize = header_.size() - 1;
-        for (const auto& it : rows_) {
-            if (it.second.size() != consistentSize) {
-                return false;
-            }
-        }
-
-        return true;
+    bool CSVTree::isConsistent(const CSVRow& row) const noexcept {
+        return header_.size() - 1 == row.Size();
     }
 
     size_t CSVTree::getHeaderIndex(const std::string& colName) const {
@@ -30,31 +25,68 @@ namespace csv {
     }
 
     CSVTree::CSVTree(const std::vector<std::string>& header,
-                     const std::unordered_map<size_t, std::vector<std::string>>& data)
+                     const std::vector<CSVRow>& data)
         : header_(header), rows_(data) {
-        if (!isConsistent()) {
-            // @todo throw
+        for (const auto& row : rows_) {
+            if (!isConsistent(row)) {
+                throw InconsistentRowErr(header_.size() - 1, row.Size());
+            }
         }
     }
 
     CSVTree::CSVTree(std::vector<std::string>&& header,
-                     std::unordered_map<size_t, std::vector<std::string>>&& data)
+                     std::vector<CSVRow>&& data)
         : header_(std::move(header)), rows_(std::move(data)) {
-        if (!isConsistent()) {
-            // @todo throw
+        for (const auto& row : rows_) {
+            if (!isConsistent(row)) {
+                throw InconsistentRowErr(header_.size() - 1, row.Size());
+            }
         }
     }
 
-    std::string& CSVTree::Get(size_t rowInd, const std::string& colName) {
+    std::string& CSVTree::GetCell(size_t rowInd, const std::string& colName) {
         // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
         assert(!colName.empty());
         // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
-        return rows_.find(rowInd)->second[getHeaderIndex(colName)];
+        for (auto& it : rows_) {
+            const size_t recordInd = it.RowIndex();
+            if (recordInd == rowInd) {
+                return it.Data().second.at(getHeaderIndex(colName));
+            }
+        }
+        
+        throw;
     }
 
-    std::string CSVTree::Get(size_t rowInd, const std::string& colName) const {
+    std::string CSVTree::GetCell(size_t rowInd, const std::string& colName) const {
+        // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
         assert(!colName.empty());
-        return rows_.find(rowInd)->second[getHeaderIndex(colName)];
+        // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
+        for (const auto& it : rows_) {
+            const size_t recordInd = it.RowIndex();
+            if (recordInd == rowInd) {
+                return it.RowCells().at(getHeaderIndex(colName));
+            }
+        }
+
+        // @todo throw something
+        throw; 
+    }
+
+    void CSVTree::PushRow(const CSVRow& row) {
+        rows_.push_back(row);
+    }
+
+    void CSVTree::PushRow(CSVRow&& row) {
+        rows_.push_back(std::move(row));
+    }
+
+    void CSVTree::RemoveRow(size_t rowInd) {
+        auto findRecordCellsOnRowInd = [rowInd](const CSVRow& row) {
+            return rowInd == row.RowIndex();
+        };
+        const auto elToErase = std::find_if(rows_.cbegin(), rows_.cend(), findRecordCellsOnRowInd);
+        rows_.erase(elToErase);
     }
 
     void CSVTree::Print() const {
@@ -65,13 +97,29 @@ namespace csv {
         std::cout << std::endl;
 
         for (const auto& rowIt : rows_) {
-            std::cout << '|' << rowIt.first << '|';
+            std::cout << '|' << rowIt.RowIndex() << '|';
 
-            for (const auto& cellIt : rowIt.second) {
+            for (const auto& cellIt : rowIt.RowCells()) {
                 std::cout << cellIt << '|';
             }
             std::cout << std::endl;
         }
+    }
+
+    std::vector<CSVRow>::iterator CSVTree::begin() {
+        return rows_.begin();
+    }
+
+    std::vector<CSVRow>::iterator CSVTree::end() {
+        return rows_.end();
+    }
+
+    std::vector<CSVRow>::const_iterator CSVTree::cbegin() const {
+        return rows_.cbegin();
+    }
+
+    std::vector<CSVRow>::const_iterator CSVTree::cend() const {
+        return rows_.cend();
     }
 }
 

@@ -59,7 +59,7 @@ TEST(Detail_Test, genDefaultOutName_OnWinPath) {
 TEST(Detail_Test, genDefaultOutName_OnUNIXPath) {
     fs::path tPath("/d/Puffy/");
     std::string postfix = "brat"s, extension = "sestra"s;
-    std::string expectedStr = postfix + '.' + extension;
+    std::string expectedStr = tPath.string() + postfix + '.' + extension;
     fs::path expected(expectedStr);
     EXPECT_EQ(expected, genDefaultOutName(tPath, postfix, extension));
 }

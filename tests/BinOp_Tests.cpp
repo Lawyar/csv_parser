@@ -19,15 +19,15 @@ TEST(BinOp_Test, TestInvStrCTor1) {
 }
 
 TEST(BinOp_Test, TestInvStrCTor2) {
-    EXPECT_EQ(BinOp("a + c"s).ConstructionStatus(), csv::ConstructionStatus::UNCONSTRUCTED);
+    EXPECT_EQ(BinOp("a + c"s).Status(), csv::ConstructionStatus::UNCONSTRUCTED);
 }
 
 TEST(BinOp_Test, TestInvStrCTor3) {
-    EXPECT_EQ(BinOp("2 + c"s).ConstructionStatus(), csv::ConstructionStatus::LHS_CONSTR);
+    EXPECT_EQ(BinOp("2 + c"s).Status(), csv::ConstructionStatus::LHS_CONSTR);
 }
 
 TEST(BinOp_Test, TestInvStrCTor4) {
-    EXPECT_EQ(BinOp("b+6"s).ConstructionStatus(), csv::ConstructionStatus::RHS_CONSTR);
+    EXPECT_EQ(BinOp("b+6"s).Status(), csv::ConstructionStatus::RHS_CONSTR);
 }
 
 TEST(BinOp_Test, TestInvStrCTor5) {

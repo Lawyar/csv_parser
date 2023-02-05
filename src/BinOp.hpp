@@ -62,7 +62,7 @@ namespace csv {
 
         [[nodiscard]]  bool IsConstructed() const;
 
-        [[nodiscard]] ConstructionStatus ConstructionStatus() const;
+        [[nodiscard]] ConstructionStatus Status() const;
 
         [[nodiscard]] int Lhs() const;
         [[nodiscard]] int Rhs() const;

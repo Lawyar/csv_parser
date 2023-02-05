@@ -78,7 +78,11 @@ namespace csv {
     CSVFile::CSVFile(const fs::path& inputFile, const fs::path& outFile) {
         // prepare IO files
         iFile_ = validateAndCreateIFile(inputFile);
-        std::ofstream oFile = validateAndCreateOFile(outFile);
+        // std::ofstream oFile = validateAndCreateOFile(outFile);
+        std::ofstream oFile(outFile);
+        if (!oFile.good()) {
+            throw std::runtime_error("invalid file");
+        }
 
         // get header
         std::string headerStr;

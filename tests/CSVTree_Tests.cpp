@@ -47,12 +47,12 @@ using csv::CSVRow;
 
 TEST(Tree_Exp, CheckPrint) {
     const std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };
-    csv::Cell c11("A"s), c12("B"s), c13("C"s);
-    csv::Cell c21("D"s), c22("E"s), c23("F"s);
-    csv::Cell c31("G"s), c32("H"s), c33("I"s);
-    std::vector<std::reference_wrapper<csv::Cell>> rC1{c11, c12, c13};
-    std::vector<std::reference_wrapper<csv::Cell>> rC2{ c21, c22, c23 };
-    std::vector<std::reference_wrapper<csv::Cell>> rC3{ c31, c32, c33 };
+    std::shared_ptr<csv::Cell> c11 = std::make_shared<csv::Cell>("A"s), c12 = std::make_shared<csv::Cell>("B"s), c13 = std::make_shared<csv::Cell>("C"s);
+    std::shared_ptr<csv::Cell> c21 = std::make_shared<csv::Cell>("D"s), c22 = std::make_shared<csv::Cell>("E"s), c23 = std::make_shared<csv::Cell>("F"s);
+    std::shared_ptr<csv::Cell> c31 = std::make_shared<csv::Cell>("G"s), c32 = std::make_shared<csv::Cell>("H"s), c33 = std::make_shared<csv::Cell>("I"s);
+    std::vector<std::shared_ptr<csv::Cell>> rC1{ c11, c12, c13};
+    std::vector<std::shared_ptr<csv::Cell>> rC2{ c21, c22, c23 };
+    std::vector<std::shared_ptr<csv::Cell>> rC3{ c31, c32, c33 };
     
     const CSVRow r1{ {1, rC1} };
     const CSVRow r2{ {2, rC2} };

@@ -178,7 +178,7 @@ namespace csv {
         return constrStatus_ == ConstructionStatus::FULL_CONSTR;
     }
 
-    ConstructionStatus BinOp::ConstructionStatus() const {
+    ConstructionStatus BinOp::Status() const {
         return constrStatus_;
     }
 

@@ -5,11 +5,14 @@
 using namespace std::string_literals;
 
 namespace csv {
+    CellAbstract::CellAbstract()
+        : CellAbstract(" "s) { }
+
     CellAbstract::CellAbstract(const std::string& str) : cellStr_(str) {
         cellStr_ = cellStr_.empty() ? " "s : cellStr_;
     }
 
-    CellAbstract::CellAbstract(std::string&& str) : cellStr_(std::move(str)) {
+    CellAbstract::CellAbstract(std::string&& str) noexcept : cellStr_(std::move(str)) {
         cellStr_ = cellStr_.empty() ? " "s : cellStr_;
     }
 
@@ -51,7 +54,7 @@ namespace csv {
         return *this;
     }
 
-    CellAbstract& CellAbstract::operator=(std::string&& str) {
+    CellAbstract& CellAbstract::operator=(std::string&& str) noexcept {
         cellStr_ = std::move(str);
 
         return *this;

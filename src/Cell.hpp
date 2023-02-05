@@ -1,12 +1,12 @@
 #pragma once
 
-#include <CellAbstract.hpp>
+#include <CellCRTP.hpp>
 
 namespace csv {
-    template <typename Derived>
-    class Cell : public CellAbstract {
-        [[nodiscard]] std::unique_ptr<CellAbstract> Clone() const override {
-            return std::make_unique<Derived>(static_cast<const Derived&>(*this));
-        }
+    class Cell : public CellCRTP<Cell> {
+    public:
+        Cell() : CellCRTP() { }
+        Cell(const std::string& str) : CellCRTP(str) { }
+        Cell(std::string&& str) : CellCRTP(std::move(str)) { }
     };
 }

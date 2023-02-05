@@ -5,11 +5,11 @@
 
 namespace csv {
     class CellAbstract {
-    private:
+    protected:
         std::string cellStr_;
 
     public:
-        CellAbstract() = default;
+        CellAbstract();
         CellAbstract(const std::string& str);
         CellAbstract(std::string&& str) noexcept;
         CellAbstract(const CellAbstract& rhs);
@@ -31,7 +31,7 @@ namespace csv {
         CellAbstract& operator=(const std::string& str);
         CellAbstract& operator=(std::string&& str) noexcept;
 
-        virtual std::unique_ptr<CellAbstract> Clone() const = 0;
+        [[nodiscard]] virtual std::unique_ptr<CellAbstract> Clone() const = 0;
     };
 
     bool operator==(const CellAbstract& lhs, const CellAbstract& rhs);

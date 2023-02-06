@@ -32,7 +32,11 @@ namespace csv {
 
     CSVTree::CSVTree(const std::vector<std::string>& header,
                      const std::vector<CSVRow>& data)
-        : header_(header), rows_(data) {
+        : header_(header) {
+        for (const auto& row : data) {
+            rows_.push_back(row);
+        }
+
         for (const auto& row : rows_) {
             if (!isConsistent(row)) {
                 throw InconsistentRowErr(header_.size() - 1, row.Size());
@@ -65,34 +69,19 @@ namespace csv {
         return header_.size() - 1;
     }
 
-    csv::Cell* CSVTree::GetCell(size_t rowInd, const std::string& colName) {
-        // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
-        assert(!colName.empty());
-        // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
-        for (auto& it : rows_) {
-            const size_t recordInd = it.RowIndex();
-            if (recordInd == rowInd) {
-                return it.Data().second.at(getHeaderIndex(colName)).get();
-            }
-        }
-        
-        throw;
-    }
+    //csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const & {
+    //    // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
+    //    assert(!colName.empty());
+    //    // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
+    //    for (auto& it : rows_) {
+    //        const size_t recordInd = it.RowIndex();
+    //        if (recordInd == rowInd) {
+    //            return it[getHeaderIndex(colName)];
+    //        }
+    //    }
 
-    csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const {
-        // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
-        assert(!colName.empty());
-        // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
-        for (const auto& it : rows_) {
-            const size_t recordInd = it.RowIndex();
-            if (recordInd == rowInd) {
-                return *(it.RowCells().at(getHeaderIndex(colName)).get());
-            }
-        }
-
-        // @todo throw something
-        throw; 
-    }
+    //    throw;
+    //}
 
     void CSVTree::PushRow(const CSVRow& row) {
         if (!isConsistent(row)) {
@@ -108,15 +97,7 @@ namespace csv {
         rows_.push_back(std::move(row));
     }
 
-    void CSVTree::RemoveRow(size_t rowInd) {
-        auto findRecordCellsOnRowInd = [rowInd](const CSVRow& row) {
-            return rowInd == row.RowIndex();
-        };
-        const auto elToErase = std::find_if(rows_.cbegin(), rows_.cend(), findRecordCellsOnRowInd);
-        rows_.erase(elToErase);
-    }
-
-    void CSVTree::Print() const {
+    /*void CSVTree::Print() const {
         std::cout << '|';
         for (const auto& headerIt : header_) {
             std::cout << headerIt << '|';
@@ -127,11 +108,11 @@ namespace csv {
             std::cout << '|' << rowIt.RowIndex() << '|';
 
             for (const auto& cellIt : rowIt.RowCells()) {
-                std::cout << cellIt.get()->ToString() << '|';
+                std::cout << cellIt->ToString() << '|';
             }
             std::cout << std::endl;
         }
-    }
+    }*/
 
     std::vector<CSVRow>::iterator CSVTree::begin() {
         return rows_.begin();

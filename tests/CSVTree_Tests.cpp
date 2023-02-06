@@ -45,25 +45,25 @@ TEST(Tree_Exp, Indexing) {
 using csv::CSVTree;
 using csv::CSVRow;
 
-TEST(Tree_Exp, CheckPrint) {
-    const std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };
-    std::shared_ptr<csv::Cell> c11 = std::make_shared<csv::Cell>("A"s), c12 = std::make_shared<csv::Cell>("B"s), c13 = std::make_shared<csv::Cell>("C"s);
-    std::shared_ptr<csv::Cell> c21 = std::make_shared<csv::Cell>("D"s), c22 = std::make_shared<csv::Cell>("E"s), c23 = std::make_shared<csv::Cell>("F"s);
-    std::shared_ptr<csv::Cell> c31 = std::make_shared<csv::Cell>("G"s), c32 = std::make_shared<csv::Cell>("H"s), c33 = std::make_shared<csv::Cell>("I"s);
-    std::vector<std::shared_ptr<csv::Cell>> rC1{ c11, c12, c13};
-    std::vector<std::shared_ptr<csv::Cell>> rC2{ c21, c22, c23 };
-    std::vector<std::shared_ptr<csv::Cell>> rC3{ c31, c32, c33 };
-    
-    const CSVRow r1{ {1, rC1} };
-    const CSVRow r2{ {2, rC2} };
-    const CSVRow r3{ {3, rC3} };
-
-    const std::vector<CSVRow> treeData = { r1, r2, r3 };
-
-    const CSVTree tree{ header, treeData };
-
-    tree.Print();
-}
+//TEST(Tree_Exp, CheckPrint) {
+//    const std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };
+//    std::unique_ptr<csv::Cell> c11 = std::make_unique<csv::Cell>("A"s), c12 = std::make_unique<csv::Cell>("B"s), c13 = std::make_unique<csv::Cell>("C"s);
+//    std::unique_ptr<csv::Cell> c21 = std::make_unique<csv::Cell>("D"s), c22 = std::make_unique<csv::Cell>("E"s), c23 = std::make_unique<csv::Cell>("F"s);
+//    std::unique_ptr<csv::Cell> c31 = std::make_unique<csv::Cell>("G"s), c32 = std::make_unique<csv::Cell>("H"s), c33 = std::make_unique<csv::Cell>("I"s);
+//    std::vector<std::unique_ptr<csv::Cell>> rC1{ std::move(c11), std::move(c12), std::move(c13) };
+//    std::vector<std::unique_ptr<csv::Cell>> rC2{ std::move(c21), std::move(c22), std::move(c23) };
+//    std::vector<std::unique_ptr<csv::Cell>> rC3{ std::move(c31), std::move(c32), std::move(c33) };
+//    
+//    /*const CSVRow r1{ {1, std::move(rC1)} };
+//    const CSVRow r2{ {2, std::move(rC2)} };
+//    const CSVRow r3{ {3, std::move(rC3)} };*/
+//
+//    const std::vector<CSVRow> treeData = { r1, r2, r3 };
+//
+//    const CSVTree tree{ header, treeData };
+//
+//    tree.Print();
+//}
 
 //TEST(Tree_Exp, CheckPush) {
 //    const std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };

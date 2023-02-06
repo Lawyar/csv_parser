@@ -36,8 +36,7 @@ namespace csv {
         // header_.size() - 1
         size_t ConsistentSize() const;
 
-        csv::Cell* GetCell(size_t rowInd, const std::string& colName);
-        csv::Cell GetCell(size_t rowInd, const std::string& colName) const;
+        csv::Cell GetCell(size_t rowInd, const std::string& colName) const&;
 
         void PushRow(const CSVRow& row);
         void PushRow(CSVRow&& row);

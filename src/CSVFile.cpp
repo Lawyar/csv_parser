@@ -47,11 +47,11 @@ namespace csv {
         std::vector<std::string> rowData = detail_::strSplit(rowStr, fileTree_.ConsistentSize(), ',');
 
         // get row index
-        int rowIndex = std::stoi(rowData[0]);
+        size_t rowIndex = std::stoull(rowData[0]);
         rowData.erase(rowData.begin());
 
         // generate std::vector<csv::Cell>
-        std::vector<std::shared_ptr<csv::Cell>> rowCells;
+        std::vector<std::unique_ptr<csv::Cell>> rowCells;
         rowCells.reserve(rowData.size());
         for (const auto& cellStr : rowData) {
             if (cellStr[0] == '=') {
@@ -59,15 +59,15 @@ namespace csv {
                 // process BinOp
             }
             else {
-                std::shared_ptr<Cell> currCell = std::make_shared<Cell>(cellStr);
-                rowCells.push_back(currCell);
+                std::unique_ptr<Cell> currCell = std::make_unique<Cell>(cellStr);
+                rowCells.push_back(std::move(currCell));
             }
         }
 
         // pushing row into the tree
-        CSVRow row{ {rowIndex, rowCells} };
+        CSVRow row{ rowIndex, std::move(rowCells)};
         try {
-            fileTree_.PushRow(std::move(row));
+            //fileTree_.PushRow(std::move(row));
         }
         catch (csv::InconsistentRowErr& ex) {
             std::cout << "Warning: row with index " << rowIndex

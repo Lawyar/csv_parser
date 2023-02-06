@@ -5,67 +5,68 @@
 using namespace std::string_literals;
 
 namespace csv {
-    //CSVRow::CSVRow(const std::vector<std::string>& rowWithIndex) {
-    //    // @todo exception safety
-    //    row_.first = std::stoi(rowWithIndex[0]);
-    //    std::copy(rowWithIndex.begin() + 1, rowWithIndex.end(), row_.second.begin());
-    //}
+    CSVRow::CSVRow(const CSVRow& row) : CSVRow(row.row_) { }
 
-    //CSVRow::CSVRow(std::vector<std::string>&& rowWithIndex) {
-    //    row_.first = std::stoi(rowWithIndex[0]);
-    //    rowWithIndex.erase(rowWithIndex.begin());
-    //    row_.second = std::move(rowWithIndex);
-    //}
+    CSVRow::CSVRow(CSVRow&& row) noexcept : CSVRow(std::move(row.row_)) { }
 
-    //CSVRow::CSVRow(const std::pair<size_t, std::vector<std::string>>& record)
-    //    : row_(record) { }
+    CSVRow::CSVRow(const std::vector<std::string>& rowStrWithIndex) {
+        row_.first = std::stoi(rowStrWithIndex[0]);
+        row_.second.reserve(rowStrWithIndex.size() - 1);
 
-    //CSVRow::CSVRow(std::pair<size_t, std::vector<std::string>>&& record)
-    //    : row_(std::move(record)) { }
-
-    CSVRow::CSVRow(const std::pair<size_t, std::vector<std::shared_ptr<Cell>>>& rowData)
-        : row_(rowData){ }
-
-    CSVRow::operator std::pair<size_t, std::vector<std::shared_ptr<Cell>>>() const {
-        return row_;
+        for (auto strIt = rowStrWithIndex.begin() + 1; strIt != rowStrWithIndex.end(); ++strIt) {
+            row_.second.push_back(std::make_unique<Cell>(*strIt));
+        }
     }
 
-    /*csv::Cell& CSVRow::operator[](size_t index) {
-        return row_.second.at(index);
+    CSVRow::CSVRow(std::vector<std::string>&& rowStrWithIndex) {
+        row_.first = std::stoi(rowStrWithIndex[0]);
+        row_.second.reserve(rowStrWithIndex.size() - 1);
+
+        for (auto strIt = rowStrWithIndex.begin() + 1; strIt != rowStrWithIndex.end(); ++strIt) {
+            row_.second.push_back(std::make_unique<Cell>(std::move(*strIt)));
+        }
+    }
+
+    CSVRow::CSVRow(const std::pair<size_t, std::vector<std::unique_ptr<Cell>>>& indexedCells)
+        : CSVRow(indexedCells.first, indexedCells.second){ }
+
+    CSVRow::CSVRow(std::pair<size_t, std::vector<std::unique_ptr<Cell>>>&& indexedCells)
+        : CSVRow(indexedCells.first, std::move(indexedCells.second)) { }
+
+    CSVRow::CSVRow(size_t rowIndex, std::vector<std::unique_ptr<Cell>>&& cells)
+        : row_({ rowIndex, std::move(cells) }) {}
+
+    CSVRow::CSVRow(size_t rowIndex, const std::vector<std::unique_ptr<Cell>>& cells) {
+        row_.first = rowIndex;
+        row_.second.reserve(cells.size());
+        for (const auto& cell : cells) {
+            row_.second.push_back(std::make_unique<Cell>(*cell));
+        }
+    }
+
+    CSVRow::operator std::pair<size_t, std::vector<std::unique_ptr<Cell>>>() const {
+        CSVRow copy(row_.first, row_.second);
+        return std::make_pair(copy.row_.first, std::move(copy.row_.second));
+    }
+
+    csv::Cell& CSVRow::operator[](size_t index) {
+        return *row_.second.at(index);
     }
 
     csv::Cell CSVRow::operator[](size_t index) const {
-        return row_.second.at(index).get();
-    }*/
+        return *row_.second.at(index);
+    }
 
     size_t CSVRow::RowIndex() const noexcept {
         return row_.first;
     }
 
-    std::vector<std::shared_ptr<csv::Cell>> CSVRow::RowCells() const {
+    const std::vector<std::unique_ptr<csv::Cell>>& CSVRow::RowCells() const & {
         return row_.second;
-    }
-
-    std::pair<size_t, std::vector<std::shared_ptr<Cell>>> CSVRow::CloneRow() const {
-        return row_;
-    }
-
-    std::pair<size_t, std::vector<std::shared_ptr<Cell>>>& CSVRow::Data() & {
-        return row_;
     }
 
     void CSVRow::SetRowIndex(size_t newIndex) noexcept {
         row_.first = newIndex;
-    }
-
-    void CSVRow::SetRowCells(const std::vector<std::shared_ptr<Cell>>& newCells) {
-        CSVRow tmp({ row_.first, newCells });
-        *this = std::move(tmp);
-    }
-
-    void CSVRow::SetRowCells(std::vector<std::shared_ptr<Cell>>&& newCells) noexcept {
-        CSVRow tmp({ row_.first, std::move(newCells) });
-        *this = std::move(tmp);
     }
 
     size_t CSVRow::Size() const noexcept {

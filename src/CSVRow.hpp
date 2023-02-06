@@ -11,30 +11,29 @@ namespace csv {
     class CSVRow final {
     private:
         // index and row cells
-        std::pair<size_t, std::vector<std::shared_ptr<Cell>>> row_;
+        std::pair<size_t, std::vector<std::unique_ptr<Cell>>> row_;
 
     public:
-        /*CSVRow(const std::vector<std::string>& rowWithIndex);
-        CSVRow(std::vector<std::string>&& rowWithIndex);
-        CSVRow(const std::pair<size_t, std::vector<std::string>>& record);
-        CSVRow(std::pair<size_t, std::vector<std::string>>&& record);*/
+        CSVRow(const CSVRow& row);
+        CSVRow(CSVRow&& row) noexcept;
 
-        CSVRow(const std::pair<size_t, std::vector<std::shared_ptr<Cell>>>& rowData);
+        CSVRow(const std::vector<std::string>& rowStrWithIndex);
+        CSVRow(std::vector<std::string>&& rowStrWithIndex);
 
-        operator std::pair<size_t, std::vector<std::shared_ptr<Cell>>>() const;
+        CSVRow(const std::pair < size_t, std::vector<std::unique_ptr<Cell>>>& indexedCells);
+        CSVRow(std::pair < size_t, std::vector<std::unique_ptr<Cell>>>&& indexedCells);
+        CSVRow(size_t rowIndex, std::vector<std::unique_ptr<Cell>>&& cells);
+        CSVRow(size_t rowIndex, const std::vector<std::unique_ptr<Cell>>& cells);
+
+        operator std::pair<size_t, std::vector<std::unique_ptr<Cell>>>() const;
 
         [[nodiscard]] csv::Cell& operator[](size_t index);
-        [[nodiscard]] std::string operator[](size_t index) const;
+        [[nodiscard]] csv::Cell operator[](size_t index) const;
 
         [[nodiscard]] size_t RowIndex() const noexcept;
-        [[nodiscard]] std::vector<std::shared_ptr<csv::Cell>> RowCells() const;
-
-        [[nodiscard]] std::pair<size_t, std::vector<std::shared_ptr<Cell>>> CloneRow() const;
-        [[nodiscard]] std::pair<size_t, std::vector<std::shared_ptr<Cell>>>& Data()&;
+        [[nodiscard]] const std::vector<std::unique_ptr<csv::Cell>>& RowCells() const &;
 
         void SetRowIndex(size_t newIndex) noexcept;
-        void SetRowCells(const std::vector<std::shared_ptr<Cell>>& newCells);
-        void SetRowCells(std::vector<std::shared_ptr<Cell>>&& newCells) noexcept;
 
         [[nodiscard]] size_t Size() const noexcept;
 

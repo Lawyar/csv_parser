@@ -17,7 +17,7 @@ namespace {
         case csv::OpType::MUL: {
             return '*';
         }
-        case csv::OpType::DIV: {
+        default: {
             return '/';
         }
         }
@@ -96,7 +96,7 @@ namespace csv {
 
 
     void BinOp::initSign() {
-        signPosition_ = cellStr_.find_first_of(POSSIBLE_SIGNS, 1);
+        signPosition_ = cellStr_.find_first_of(POSSIBLE_SIGNS, 2);
         if (signPosition_ == std::string::npos) {
             throw BinOpConstructionErr("Input string doesn't contain possible operation");
         }
@@ -113,15 +113,13 @@ namespace csv {
     }
 
     BinOp::BinOp(const std::string& binOpStr)
-        : Cell(binOpStr) {
-        std::string strForm = cellStr_;
-        strForm.erase(0, 1);  // removing '='
-        std::erase_if(strForm, isspace);  // removing spaces 
+        : Cell(binOpStr) {  // removing '='
+        std::erase_if(cellStr_, isspace);  // removing spaces 
         //assert(strForm.length() >= 3);
 
         initSign();
 
-        bool lConstr = strToInt(cellStr_.substr(0, signPosition_), lhs_);
+        bool lConstr = strToInt(cellStr_.substr(1, signPosition_), lhs_);
         bool rConstr = strToInt(cellStr_.substr(signPosition_ + 1), rhs_);
 
         if (lConstr && rConstr) {

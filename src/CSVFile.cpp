@@ -215,6 +215,7 @@ namespace csv {
         // get header
         std::string headerStr;
         std::getline(iFile_, headerStr);
+        std::erase_if(headerStr, isspace);
         processHeader(headerStr);
 
         // file iteration

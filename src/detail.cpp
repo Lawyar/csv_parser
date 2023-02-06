@@ -21,11 +21,9 @@ namespace detail_ {
         std::vector<std::string> res;
         res.reserve(wordsCount);
         size_t last = 0; size_t next = 0;
-        size_t it = 0;
         while ((next = str.find(delim, last)) != std::string::npos) {
             res.push_back(str.substr(last, next - last));
             last = next + 1;
-            ++it;
         }
         res.push_back(str.substr(last));
 

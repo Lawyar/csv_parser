@@ -141,10 +141,10 @@ namespace csv {
     int BinOp::GetExpressionResult() const {
         switch (constrStatus_) {
         case ConstructionStatus::LHS_CONSTR: {
-            throw BinOpLhsErr("Lhs value should be substituted before evaluation");
+            throw BinOpRhsErr("Rhs value should be substituted before evaluation");
         }
         case ConstructionStatus::RHS_CONSTR: {
-            throw BinOpRhsErr("Rhs value should be substituted before evaluation");
+            throw BinOpLhsErr("Lhs value should be substituted before evaluation");
         }
         case ConstructionStatus::UNCONSTRUCTED: {
             throw BinOpSubstitutionErr("Lhs and Rhs values should be substituted before evaluation");

@@ -1,5 +1,7 @@
 #include <CSVRow.hpp>
 
+#include <InconsistentRowErr.hpp>
+
 #include <charconv>
 
 using namespace std::string_literals;
@@ -10,7 +12,15 @@ namespace csv {
     CSVRow::CSVRow(CSVRow&& row) noexcept : CSVRow(std::move(row.row_)) { }
 
     CSVRow::CSVRow(const std::vector<std::string>& rowStrWithIndex) {
-        row_.first = std::stoi(rowStrWithIndex[0]);
+        try {
+            row_.first = std::stoi(rowStrWithIndex[0]);
+        }
+        catch (std::invalid_argument&) {
+            throw InconsistentRowErr("row should contain integer index at zero position");
+        }
+        catch (std::out_of_range&) {
+            throw InconsistentRowErr("row should contain integer index at zero position");
+        }
         row_.second.reserve(rowStrWithIndex.size() - 1);
 
         for (auto strIt = rowStrWithIndex.begin() + 1; strIt != rowStrWithIndex.end(); ++strIt) {
@@ -19,7 +29,15 @@ namespace csv {
     }
 
     CSVRow::CSVRow(std::vector<std::string>&& rowStrWithIndex) {
-        row_.first = std::stoi(rowStrWithIndex[0]);
+        try {
+            row_.first = std::stoi(rowStrWithIndex[0]);
+        }
+        catch (std::invalid_argument&) {
+            throw InconsistentRowErr("row should contain integer index at zero position");
+        }
+        catch (std::out_of_range&) {
+            throw InconsistentRowErr("row should contain integer index at zero position");
+        }
         row_.second.reserve(rowStrWithIndex.size() - 1);
 
         for (auto strIt = rowStrWithIndex.begin() + 1; strIt != rowStrWithIndex.end(); ++strIt) {

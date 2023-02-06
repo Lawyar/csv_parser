@@ -14,11 +14,14 @@ namespace csv {
         std::ifstream iFile_;
 
         // processHeader parses column names and counts them
-        void processHeader(std::string&& headerStr);
+        void processHeader(const std::string& headerStr);
 
         void parseRow(const std::string& rowStr);
 
         void processCell(CellAbstract& cell);
+
+        void processRhs(CellAbstract& cell);
+        void processLhs(CellAbstract& cell);
 
     public:
 

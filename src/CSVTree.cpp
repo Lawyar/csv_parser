@@ -7,6 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "BinOp.hpp"
+
 using namespace std::string_literals;
 
 namespace {
@@ -65,6 +67,10 @@ namespace csv {
         header_ = header;
     }
 
+    void CSVTree::SetHeader(std::vector<std::string>&& header) {
+        header_ = std::move(header);
+    }
+
     size_t CSVTree::ConsistentSize() const {
         return header_.size() - 1;
     }
@@ -73,7 +79,13 @@ namespace csv {
                                                         const std::string& colName) const & {
         const CSVRow& row = GetRow(rowInd);
         const Cell& cell = row[GetHeaderIndex(colName)];
-        return cell.Clone();
+        try {
+            auto binOpCell = static_cast<BinOp>(cell);
+            return cell.Clone();
+        }
+        catch (BinOpConstructionErr&) {
+            return cell.Clone();
+        }
     }
 
     //csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const & {

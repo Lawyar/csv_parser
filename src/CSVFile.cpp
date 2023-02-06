@@ -4,8 +4,10 @@
 #include <InconsistentRowErr.hpp>
 #include <detail.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 namespace fs = std::filesystem;
 using strsize_t = std::string::size_type;
@@ -41,7 +43,7 @@ namespace {
 }
 
 namespace csv {
-    void CSVFile::processHeader(std::string&& headerStr) {
+    void CSVFile::processHeader(const std::string& headerStr) {
         size_t headerSize = std::count(headerStr.begin(), headerStr.end(), ',');
         std::vector<std::string> header = detail_::strSplit(headerStr, headerSize, ',');
         fileTree_.SetHeader(header);
@@ -51,7 +53,16 @@ namespace csv {
         std::vector<std::string> rowData = detail_::strSplit(rowStr, fileTree_.ConsistentSize(), ',');
 
         // get row index
-        size_t rowIndex = std::stoull(rowData[0]);
+        size_t rowIndex;
+        try {
+            rowIndex = std::stoull(rowData[0]);
+        }
+        catch (std::invalid_argument&) {
+            return;
+        }
+        catch (std::out_of_range&) {
+            return;
+        }
         rowData.erase(rowData.begin());
 
         // generate std::vector<csv::Cell>
@@ -84,64 +95,118 @@ namespace csv {
         }
     }
 
+    void CSVFile::processLhs(CellAbstract& cell) {
+        const std::string& strData = cell.StrData();
+        size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 2);
+        std::string lhsStr = strData.substr(1, signPos - 1);
+
+        // extract cellName and indexVal from lhsStr
+        std::string::iterator indexIt = std::find_if(lhsStr.begin(), lhsStr.end(), isdigit);
+        if (indexIt != lhsStr.end()) {
+            std::string cellName = lhsStr.substr(0, indexIt - lhsStr.begin());
+
+            size_t indexVal;
+            try {
+                indexVal = std::stoull(lhsStr.substr(indexIt - lhsStr.begin()));
+            }
+            catch (std::invalid_argument&) {
+                return;
+            }
+            catch (std::out_of_range&) {
+                return;
+            }
+
+            // get correspong fileTree_ element
+            std::string cellStr;
+            try {
+                BinOp lhsCell = static_cast<BinOp>(*fileTree_.GetCell(indexVal, cellName));
+                processCell(lhsCell);
+                cellStr = lhsCell.ToString();
+            }
+            catch (...) {
+                auto lhsCell = fileTree_.GetCell(indexVal, cellName);
+                cellStr = lhsCell->ToString();
+            }
+
+            // get lhs value from cellStr
+            int cellVal;
+            try {
+                cellVal = std::stoi(cellStr);
+            }
+            catch (std::invalid_argument&) {
+                return;
+            }
+            catch (std::out_of_range&) {
+                return;
+            }
+
+            // set lhs value into BinOp
+            BinOp& cellOp = static_cast<BinOp&>(cell);
+            cellOp.SetLhs(cellVal);
+        }
+    }
+
+    void CSVFile::processRhs(CellAbstract& cell) {
+        const std::string& strData = cell.StrData();
+        size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 1);
+        std::string rhsStr = strData.substr(signPos + 1);
+
+        // extract cellName and indexVal from lhsStr
+        std::string::iterator indexIt = std::find_if(rhsStr.begin(), rhsStr.end(), isdigit);
+        if (indexIt != rhsStr.end()) {
+            std::string cellName = rhsStr.substr(0, indexIt - rhsStr.begin());
+            size_t indexVal;
+            try {
+                indexVal = std::stoull(rhsStr.substr(indexIt - rhsStr.begin()));
+            }
+            catch (std::invalid_argument&) {
+                return;
+            }
+            catch (std::out_of_range&) {
+                return;
+            }
+
+            // get fileTree_[] 
+            std::string cellStr;
+            try {
+                BinOp rhsCell = static_cast<BinOp>(*fileTree_.GetCell(indexVal, cellName));
+                processCell(rhsCell);
+                cellStr = rhsCell.ToString();
+            }
+            catch (...) {
+                auto rhsCell = fileTree_.GetCell(indexVal, cellName);
+                cellStr = rhsCell->ToString();
+            }
+            int cellVal;
+            try {
+                cellVal = std::stoi(cellStr);
+            }
+            catch (std::invalid_argument&) {
+                return;
+            }
+            catch (std::out_of_range&) {
+                return;
+            }
+            BinOp& cellOp = static_cast<BinOp&>(cell);
+            cellOp.SetRhs(cellVal);
+        }
+    }
+
     void CSVFile::processCell(CellAbstract& cell) {
-        auto processLhs = [this, &cell]() {
-            const std::string& strData = cell.StrData();
-            size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 2);
-            std::string lhsStr = strData.substr(1, signPos - 1);
-
-            // extract cellName and indexVal from lhsStr
-            std::string::iterator indexIt = std::find_if(lhsStr.begin(), lhsStr.end(), isdigit);
-            if (indexIt != lhsStr.end()) {
-                std::string cellName = lhsStr.substr(0, indexIt - lhsStr.begin());
-                size_t endd = indexIt - lhsStr.begin();
-                size_t indexVal = std::stoull(lhsStr.substr(indexIt - lhsStr.begin()));
-
-                // get fileTree_[] 
-                std::unique_ptr<CellAbstract> lhsCell = fileTree_.GetCell(indexVal, cellName);
-                processCell(*lhsCell);
-                const std::string& cellStr = lhsCell->ToString();
-                int cellVal = std::stoi(cellStr);
-                BinOp& cellOp = static_cast<BinOp&>(cell);
-                cellOp.SetLhs(cellVal);
-            }
-        };
-
-        auto processRhs = [this, &cell]() {
-            const std::string& strData = cell.StrData();
-            size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 2);
-            std::string rhsStr = strData.substr(signPos + 1);
-
-            // extract cellName and indexVal from lhsStr
-            std::string::iterator indexIt = std::find_if(rhsStr.begin(), rhsStr.end(), isdigit);
-            if (indexIt != rhsStr.end()) {
-                std::string cellName = rhsStr.substr(0, indexIt - rhsStr.begin());
-                size_t indexVal = std::stoull(rhsStr.substr(indexIt - rhsStr.begin()));
-
-                // get fileTree_[] 
-                std::unique_ptr<CellAbstract> rhsCell = fileTree_.GetCell(indexVal, cellName);
-                processCell(*rhsCell);
-                const std::string& cellStr = rhsCell->ToString();
-                int cellVal = std::stoi(cellStr);
-                BinOp& cellOp = static_cast<BinOp&>(cell);
-                cellOp.SetRhs(cellVal);
-            }
-        };
-
         try {
             cell.Evaluate();
         }
         catch (BinOpLhsErr&) {
-            processLhs();
+            processLhs(cell);
             cell.Evaluate();
         }
         catch (BinOpRhsErr&) {
-            processRhs();
+            processRhs(cell);
             cell.Evaluate();
         }
         catch (BinOpSubstitutionErr&) {
-            processLhs();
-            processRhs();
+            processLhs(cell);
+            processRhs(cell);
             cell.Evaluate();
         }
     }
@@ -157,23 +222,23 @@ namespace csv {
 
         // get header
         std::string headerStr;
-        iFile_ >> headerStr;
-        processHeader(std::move(headerStr));
+        std::getline(iFile_, headerStr);
+        processHeader(headerStr);
 
         // file iteration
-        size_t curRow = 0;
         while (iFile_.good()) {
             // parsing row
             std::string rowStr;
-            iFile_ >> rowStr;
+            std::getline(iFile_, rowStr);
+            std::erase_if(rowStr, isspace);
+            if (rowStr.empty()) {
+                continue;
+            }
             parseRow(rowStr);
-
-            // writing to oFile
-            //oFile << fileTree_[curRow].ToString() << std::endl;
-            curRow++;
         }
 
         // BinOp evaluation
+        oFile << headerStr << std::endl;
         for (auto& it : fileTree_) {
             for (auto& it2 : it) {
                 processCell(*it2);

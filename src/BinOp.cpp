@@ -136,9 +136,19 @@ namespace csv {
         }
     }
 
+    BinOp::BinOp(const csv::Cell& cell) : BinOp(cell.ToString()) { }
+
     int BinOp::GetExpressionResult() const {
-        if (constrStatus_ != ConstructionStatus::FULL_CONSTR) {
-            throw BinOpConstructionErr("BinOp should be constructed before evaluation.");
+        switch (constrStatus_) {
+        case ConstructionStatus::LHS_CONSTR: {
+            throw BinOpLhsErr("Lhs value should be substituted before evaluation");
+        }
+        case ConstructionStatus::RHS_CONSTR: {
+            throw BinOpRhsErr("Rhs value should be substituted before evaluation");
+        }
+        case ConstructionStatus::UNCONSTRUCTED: {
+            throw BinOpSubstitutionErr("Lhs and Rhs values should be substituted before evaluation");
+        }
         }
 
         switch (op_) {
@@ -155,13 +165,11 @@ namespace csv {
             return doDiv();
         }
         }
-     }
+    }
 
-    int BinOp::Evaluate() {
+    void BinOp::Evaluate() {
         const int res = GetExpressionResult();
         cellStr_ = std::to_string(res);
-
-        return res;
     }
 
     void BinOp::SubstituteOpValues(int lhs, int rhs) {

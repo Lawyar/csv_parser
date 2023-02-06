@@ -19,8 +19,6 @@ namespace csv {
         // checks consistency of existing header and new row
         [[nodiscard]] bool isConsistent(const CSVRow& row) const noexcept;
 
-        [[nodiscard]] size_t getHeaderIndex(const std::string& colName) const;
-
     public:
         CSVTree() = default;
 
@@ -36,7 +34,7 @@ namespace csv {
         // header_.size() - 1
         size_t ConsistentSize() const;
 
-        csv::Cell GetCell(size_t rowInd, const std::string& colName) const&;
+        std::unique_ptr<csv::CellAbstract> GetCell(size_t rowInd, const std::string& colName) const&;
 
         void PushRow(const CSVRow& row);
         void PushRow(CSVRow&& row);
@@ -49,11 +47,13 @@ namespace csv {
 
         void Print() const;
 
-        std::vector<CSVRow>::iterator begin();
-        std::vector<CSVRow>::iterator end();
+        [[nodiscard]] size_t GetHeaderIndex(const std::string& colName) const;
 
-        std::vector<CSVRow>::const_iterator cbegin() const;
-        std::vector<CSVRow>::const_iterator cend() const;
+        std::vector<CSVRow>::iterator begin(); // rows_.begin()
+        std::vector<CSVRow>::iterator end(); // rows_.end()
+
+        std::vector<CSVRow>::const_iterator cbegin() const; // rows_.cbegin()
+        std::vector<CSVRow>::const_iterator cend() const; // rows.cend()
     };
 
 }  // namespace csv

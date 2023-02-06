@@ -41,5 +41,10 @@ namespace csv {
 
         bool operator==(const CSVRow& rhs) const;
         bool operator!=(const CSVRow& rhs) const;
+
+        std::vector<std::unique_ptr<Cell>>::iterator begin();
+        std::vector<std::unique_ptr<Cell>>::iterator end();
+        std::vector<std::unique_ptr<Cell>>::const_iterator cbegin() const;
+        std::vector<std::unique_ptr<Cell>>::const_iterator cend() const;
     };
 }

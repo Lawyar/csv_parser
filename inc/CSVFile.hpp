@@ -18,6 +18,8 @@ namespace csv {
 
         void parseRow(const std::string& rowStr);
 
+        void processCell(CellAbstract& cell);
+
     public:
 
         CSVFile(const std::filesystem::path& inputFile,

@@ -20,3 +20,4 @@ gtest_discover_tests(csv_parser_tests)
 
 target_link_libraries(csv_parser_tests PRIVATE gtest_main)
 target_include_directories(csv_parser_tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(csv_parser_tests PUBLIC ${CMAKE_SOURCE_DIR}/inc)

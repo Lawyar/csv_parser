@@ -17,3 +17,12 @@ TEST(CSVFile_Test, csv2_Test) {
     csv::CSVFile file("/mnt/d/Data/learning/cpp/csv_parser/data/csv2.csv");
 #endif
 }
+
+TEST(CSVFile_Test, csv3_Test) {
+#ifdef _WIN32
+    csv::CSVFile file("D:\\Data\\learning\\cpp\\csv_parser\\data\\csv3.csv");
+#else
+    csv::CSVFile file("/mnt/d/Data/learning/cpp/csv_parser/data/csv3.csv");
+#endif
+}
+

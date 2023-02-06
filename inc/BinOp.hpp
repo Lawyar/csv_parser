@@ -11,6 +11,18 @@ namespace csv {
         using std::runtime_error::runtime_error;
     };
 
+    class BinOpSubstitutionErr : public std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
+
+    class BinOpLhsErr : public BinOpSubstitutionErr {
+        using BinOpSubstitutionErr::BinOpSubstitutionErr;
+    };
+
+    class BinOpRhsErr : public BinOpSubstitutionErr {
+        using BinOpSubstitutionErr::BinOpSubstitutionErr;
+    };
+
     enum class OpType {
         ADD,
         SUB,
@@ -52,15 +64,17 @@ namespace csv {
         // Ex1: =32+85 ; Ex2: =A3+ 4 ; Ex3: =32+C7
         BinOp(const std::string& binOpStr);
 
+        BinOp(const csv::Cell& cell);
+
         // simple returns operation result
         [[nodiscard]] int GetExpressionResult() const;
 
         // returns operation result and substitutes it into CellAbstract::cellStr_
-        int Evaluate();
+        virtual void Evaluate() override;
 
         void SubstituteOpValues(int lhs, int rhs);
 
-        [[nodiscard]]  bool IsConstructed() const;
+        [[nodiscard]] bool IsConstructed() const;
 
         [[nodiscard]] ConstructionStatus Status() const;
 

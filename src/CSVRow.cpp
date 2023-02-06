@@ -90,4 +90,20 @@ namespace csv {
     bool CSVRow::operator!=(const CSVRow& rhs) const {
         return !(*this == rhs);
     }
+
+    std::vector<std::unique_ptr<Cell>>::iterator CSVRow::begin() {
+        return row_.second.begin();
+    }
+
+    std::vector<std::unique_ptr<Cell>>::iterator CSVRow::end() {
+        return row_.second.end();
+    }
+
+    std::vector<std::unique_ptr<Cell>>::const_iterator CSVRow::cbegin() const {
+        return row_.second.cbegin();
+    }
+
+    std::vector<std::unique_ptr<Cell>>::const_iterator CSVRow::cend() const {
+        return row_.second.cend();
+    }
 }

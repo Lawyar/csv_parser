@@ -24,7 +24,7 @@ namespace csv {
         return cellStr_ == rhs.cellStr_;
     }
 
-    std::string CellAbstract::ToString() const {
+    const std::string& CellAbstract::ToString() const {
         return cellStr_;
     }
 

@@ -20,14 +20,14 @@ namespace csv {
         return isConsistentRow(row, header_.size() - 1);
     }
 
-    size_t CSVTree::getHeaderIndex(const std::string& colName) const {
+    size_t CSVTree::GetHeaderIndex(const std::string& colName) const {
         const auto& indIter = std::find(header_.begin(), header_.end(), colName);
 
         if (indIter == header_.end()) {
             const std::string&& exMess = "No such colName = "s + colName;
             throw std::out_of_range(exMess);
         }
-        return indIter - header_.begin();
+        return indIter - header_.begin() - 1;
     }
 
     CSVTree::CSVTree(const std::vector<std::string>& header,
@@ -69,6 +69,13 @@ namespace csv {
         return header_.size() - 1;
     }
 
+    std::unique_ptr<csv::CellAbstract> CSVTree::GetCell(size_t rowInd,
+                                                        const std::string& colName) const & {
+        const CSVRow& row = GetRow(rowInd);
+        const Cell& cell = row[GetHeaderIndex(colName)];
+        return cell.Clone();
+    }
+
     //csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const & {
     //    // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
     //    assert(!colName.empty());
@@ -76,7 +83,7 @@ namespace csv {
     //    for (auto& it : rows_) {
     //        const size_t recordInd = it.RowIndex();
     //        if (recordInd == rowInd) {
-    //            return it[getHeaderIndex(colName)];
+    //            return it[GetHeaderIndex(colName)];
     //        }
     //    }
 

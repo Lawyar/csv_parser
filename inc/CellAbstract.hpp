@@ -19,7 +19,7 @@ namespace csv {
 
         [[nodiscard]] virtual bool IsEqual(const CellAbstract& rhs) const;
 
-        [[nodiscard]] std::string ToString() const;
+        [[nodiscard]] const std::string& ToString() const;
 
         [[nodiscard]] std::string& StrData() &;
 
@@ -32,6 +32,8 @@ namespace csv {
         CellAbstract& operator=(std::string&& str) noexcept;
 
         [[nodiscard]] virtual std::unique_ptr<CellAbstract> Clone() const = 0;
+        
+        virtual void Evaluate() {}
     };
 
     bool operator==(const CellAbstract& lhs, const CellAbstract& rhs);

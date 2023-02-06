@@ -10,10 +10,9 @@
 namespace csv {
     class CSVTree {
     private:
-        // using RowsType = std::unordered_map<size_t, std::vector<std::string>>;
-        // размер заголовка должен быть на единицу больше размера каждой записи,
-        // так как заголовок содержит название столбца индексов
         std::vector<std::string> header_;
+
+        // expected that CSVRow::Size() == header.size() - 1
         std::vector<CSVRow> rows_;
 
         // checks consistency of existing header and new row
@@ -28,32 +27,32 @@ namespace csv {
         CSVTree(std::vector<std::string>&& header,
                 std::vector<CSVRow>&& data);
 
+        // changing the header_ field. throws exception if new header isn't consistent with existing rows
         void SetHeader(const std::vector<std::string>& header);
         void SetHeader(std::vector<std::string>&& header);
 
         // header_.size() - 1
-        size_t ConsistentSize() const;
+        [[nodiscard]] size_t ConsistentSize() const;
 
-        std::unique_ptr<csv::CellAbstract> GetCell(size_t rowInd, const std::string& colName) const&;
+        // casts to std::unique_ptr<csv::BinOp> if possible
+        [[nodiscard]] std::unique_ptr<CellAbstract> GetCell(size_t rowInd, const std::string& colName) const&;
 
+        // push_back into rows_
         void PushRow(const CSVRow& row);
         void PushRow(CSVRow&& row);
+        
+        [[nodiscard]] const CSVRow& GetRow(size_t rowInd) const&;
 
-        void RemoveRow(size_t rowInd);
+        [[nodiscard]] const CSVRow& operator[](size_t rowInd) const&;
 
-        const CSVRow& GetRow(size_t rowInd) const&;
-
-        const CSVRow& operator[](size_t rowInd) const&;
-
-        void Print() const;
-
+        // returns position of colName from the header
         [[nodiscard]] size_t GetHeaderIndex(const std::string& colName) const;
 
-        std::vector<CSVRow>::iterator begin(); // rows_.begin()
-        std::vector<CSVRow>::iterator end(); // rows_.end()
+        [[nodiscard]] std::vector<CSVRow>::iterator begin(); // rows_.begin()
+        [[nodiscard]] std::vector<CSVRow>::iterator end(); // rows_.end()
 
-        std::vector<CSVRow>::const_iterator cbegin() const; // rows_.cbegin()
-        std::vector<CSVRow>::const_iterator cend() const; // rows.cend()
+        [[nodiscard]] std::vector<CSVRow>::const_iterator cbegin() const; // rows_.cbegin()
+        [[nodiscard]] std::vector<CSVRow>::const_iterator cend() const; // rows.cend()
     };
 
 }  // namespace csv

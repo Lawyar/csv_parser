@@ -88,20 +88,6 @@ namespace csv {
         }
     }
 
-    //csv::Cell CSVTree::GetCell(size_t rowInd, const std::string& colName) const & {
-    //    // empty Names doesn't exist because if empty column Name occurs in the file, it will be presented as single whitespace
-    //    assert(!colName.empty());
-    //    // find usage because operator[] inserts value into unordered_map if it doesn't exist, so it can't be const. 
-    //    for (auto& it : rows_) {
-    //        const size_t recordInd = it.RowIndex();
-    //        if (recordInd == rowInd) {
-    //            return it[GetHeaderIndex(colName)];
-    //        }
-    //    }
-
-    //    throw;
-    //}
-
     void CSVTree::PushRow(const CSVRow& row) {
         if (!isConsistent(row)) {
             throw InconsistentRowErr(header_.size() - 1, row.Size());
@@ -128,23 +114,6 @@ namespace csv {
 
     const CSVRow& CSVTree::operator[](size_t rowInd) const & {
         return rows_[rowInd];
-    }
-
-    void CSVTree::Print() const {
-        std::cout << '|';
-        for (const auto& headerIt : header_) {
-            std::cout << headerIt << '|';
-        }
-        std::cout << std::endl;
-
-        for (const auto& rowIt : rows_) {
-            std::cout << '|' << rowIt.RowIndex() << '|';
-
-            for (const auto& cellIt : rowIt.RowCells()) {
-                std::cout << cellIt->ToString() << '|';
-            }
-            std::cout << std::endl;
-        }
     }
 
     std::vector<CSVRow>::iterator CSVTree::begin() {

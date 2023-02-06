@@ -8,7 +8,7 @@ using namespace std::string_literals;
 using csv::CSVTree;
 using csv::CSVRow;
 
-TEST(CSVTree_Test, CheckPrint) {
+TEST(CSVTree_Test, CheckCTor) {
     const std::vector<std::string> header{ " "s, "A"s, "B"s, "C"s };
     std::unique_ptr<csv::Cell> c11 = std::make_unique<csv::Cell>("A"s), c12 = std::make_unique<csv::Cell>("B"s), c13 = std::make_unique<csv::Cell>("C"s);
     std::unique_ptr<csv::Cell> c21 = std::make_unique<csv::Cell>("D"s), c22 = std::make_unique<csv::Cell>("E"s), c23 = std::make_unique<csv::Cell>("F"s);
@@ -26,14 +26,13 @@ TEST(CSVTree_Test, CheckPrint) {
     rC3.push_back(std::move(c32));
     rC3.push_back(std::move(c33));
 
-    const CSVRow r1{ 1, std::move(rC1) };
-    const CSVRow r2{ 2, std::move(rC2) };
-    const CSVRow r3{ 3, std::move(rC3) };
+    CSVRow r1{ 1, std::move(rC1) };
+    CSVRow r2{ 2, std::move(rC2) };
+    CSVRow r3{ 3, std::move(rC3) };
 
-    const std::vector<CSVRow> treeData = { r1, r2, r3 };
+    const std::vector<CSVRow> treeData = { std::move(r1), std::move(r2), std::move(r3) };
 
-    const CSVTree tree{ header, treeData };
-    tree.Print();
+    EXPECT_NO_THROW(CSVTree tree( header, treeData ));
 }
 
 TEST(CSVTree_Test, CheckPush) {

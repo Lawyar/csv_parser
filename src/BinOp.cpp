@@ -65,11 +65,6 @@ namespace {
 
         return true;
     }
-
-    // formats str for parcing simplification
-    std::string formatString(const std::string& str) {
-        
-    }
     
 }
 

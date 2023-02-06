@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <filesystem>
+#include <iostream>
 #include <string>
 
 namespace csv {
@@ -24,11 +25,7 @@ namespace csv {
         void processLhs(CellAbstract& cell);
 
     public:
-
-        CSVFile(const std::filesystem::path& inputFile,
-                const std::filesystem::path& outFile);
-
-        CSVFile(const std::filesystem::path& filePath);
+        CSVFile(const std::filesystem::path& filePath, std::ostream& stream = std::cout);
 
         //std::vector<std::string> GetHeader();
     };

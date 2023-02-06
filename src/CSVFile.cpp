@@ -9,6 +9,12 @@
 #include <fstream>
 #include <string>
 
+// WIN32 std::execution::par implementation doesn't require tbb
+// @todo add tbb dependency in the cmake
+#ifdef _WIN32
+#include <execution>
+#endif
+
 namespace fs = std::filesystem;
 using strsize_t = std::string::size_type;
 
@@ -27,15 +33,6 @@ namespace {
 
         return iFile;
     }
-
-    std::ofstream validateAndCreateOFile(const fs::path& outputFile) {
-        std::ofstream oFile(outputFile);
-        if (!oFile.good()) {
-            throw std::runtime_error("invalid file");
-        }
-
-        return oFile;
-    }
 }
 
 namespace {
@@ -44,9 +41,9 @@ namespace {
 
 namespace csv {
     void CSVFile::processHeader(const std::string& headerStr) {
-        size_t headerSize = std::count(headerStr.begin(), headerStr.end(), ',');
+        const size_t headerSize = std::count(headerStr.begin(), headerStr.end(), ',');
         std::vector<std::string> header = detail_::strSplit(headerStr, headerSize, ',');
-        fileTree_.SetHeader(header);
+        fileTree_.SetHeader(std::move(header));
     }
 
     void CSVFile::parseRow(const std::string& rowStr) {
@@ -97,13 +94,13 @@ namespace csv {
 
     void CSVFile::processLhs(CellAbstract& cell) {
         const std::string& strData = cell.StrData();
-        size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 2);
+        const size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 2);
         std::string lhsStr = strData.substr(1, signPos - 1);
 
         // extract cellName and indexVal from lhsStr
-        std::string::iterator indexIt = std::find_if(lhsStr.begin(), lhsStr.end(), isdigit);
+        const std::string::iterator indexIt = std::find_if(lhsStr.begin(), lhsStr.end(), isdigit);
         if (indexIt != lhsStr.end()) {
-            std::string cellName = lhsStr.substr(0, indexIt - lhsStr.begin());
+            const std::string cellName = lhsStr.substr(0, indexIt - lhsStr.begin());
 
             size_t indexVal;
             try {
@@ -123,8 +120,8 @@ namespace csv {
                 processCell(lhsCell);
                 cellStr = lhsCell.ToString();
             }
-            catch (...) {
-                auto lhsCell = fileTree_.GetCell(indexVal, cellName);
+            catch (BinOpConstructionErr&) {
+                const auto lhsCell = fileTree_.GetCell(indexVal, cellName);
                 cellStr = lhsCell->ToString();
             }
 
@@ -148,13 +145,13 @@ namespace csv {
 
     void CSVFile::processRhs(CellAbstract& cell) {
         const std::string& strData = cell.StrData();
-        size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 1);
+        const size_t signPos = strData.find_first_of(POSSIBLE_SIGNS, 1);
         std::string rhsStr = strData.substr(signPos + 1);
 
         // extract cellName and indexVal from lhsStr
-        std::string::iterator indexIt = std::find_if(rhsStr.begin(), rhsStr.end(), isdigit);
+        const std::string::iterator indexIt = std::find_if(rhsStr.begin(), rhsStr.end(), isdigit);
         if (indexIt != rhsStr.end()) {
-            std::string cellName = rhsStr.substr(0, indexIt - rhsStr.begin());
+            const std::string cellName = rhsStr.substr(0, indexIt - rhsStr.begin());
             size_t indexVal;
             try {
                 indexVal = std::stoull(rhsStr.substr(indexIt - rhsStr.begin()));
@@ -174,7 +171,7 @@ namespace csv {
                 cellStr = rhsCell.ToString();
             }
             catch (...) {
-                auto rhsCell = fileTree_.GetCell(indexVal, cellName);
+                const auto rhsCell = fileTree_.GetCell(indexVal, cellName);
                 cellStr = rhsCell->ToString();
             }
             int cellVal;
@@ -211,14 +208,9 @@ namespace csv {
         }
     }
 
-    CSVFile::CSVFile(const fs::path& inputFile, const fs::path& outFile) {
-        // prepare IO files
+    CSVFile::CSVFile(const fs::path& inputFile, std::ostream& stream) {
+        // prepare Input file
         iFile_ = validateAndCreateIFile(inputFile);
-        // std::ofstream oFile = validateAndCreateOFile(outFile);
-        std::ofstream oFile(outFile);
-        if (!oFile.good()) {
-            throw std::runtime_error("invalid file");
-        }
 
         // get header
         std::string headerStr;
@@ -238,16 +230,21 @@ namespace csv {
         }
 
         // BinOp evaluation
-        oFile << headerStr << std::endl;
+        stream << headerStr << std::endl;
         for (auto& it : fileTree_) {
-            for (auto& it2 : it) {
-                processCell(*it2);
-            }
-            oFile << it.ToString() << std::endl;
+            // WIN32 std::execution::par implementation doesn't require tbb
+            // @todo add dependency to tbb in the cmake
+#ifdef _WIN32
+            std::for_each(std::execution::par, it.begin(), it.end(), [this](std::unique_ptr<Cell>& c) {
+                processCell(*c);
+            });
+#else
+            std::for_each(it.begin(), it.end(), [this](std::unique_ptr<Cell>& c) {
+                processCell(*c);
+        });
+#endif
+            stream << it.ToString() << std::endl;
         }
     }
-
-    CSVFile::CSVFile(const fs::path& filePath)
-    : CSVFile(filePath, detail_::genDefaultOutName(filePath)) { }
     
 }  // namespace csv

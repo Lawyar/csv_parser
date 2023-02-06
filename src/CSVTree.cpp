@@ -97,7 +97,21 @@ namespace csv {
         rows_.push_back(std::move(row));
     }
 
-    /*void CSVTree::Print() const {
+    const CSVRow& CSVTree::GetRow(size_t rowInd) const& {
+        for (const auto& it : rows_) {
+            if (it.RowIndex() == rowInd) {
+                return it;
+            }
+        }
+
+        throw std::out_of_range("Element with given rowInd"s + std::to_string(rowInd) + "doesn't exist"s);
+    }
+
+    const CSVRow& CSVTree::operator[](size_t rowInd) const & {
+        return rows_[rowInd];
+    }
+
+    void CSVTree::Print() const {
         std::cout << '|';
         for (const auto& headerIt : header_) {
             std::cout << headerIt << '|';
@@ -112,7 +126,7 @@ namespace csv {
             }
             std::cout << std::endl;
         }
-    }*/
+    }
 
     std::vector<CSVRow>::iterator CSVTree::begin() {
         return rows_.begin();

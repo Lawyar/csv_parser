@@ -43,6 +43,10 @@ namespace csv {
 
         void RemoveRow(size_t rowInd);
 
+        const CSVRow& GetRow(size_t rowInd) const&;
+
+        const CSVRow& operator[](size_t rowInd) const&;
+
         void Print() const;
 
         std::vector<CSVRow>::iterator begin();

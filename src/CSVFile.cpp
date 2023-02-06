@@ -1,11 +1,11 @@
 #include <CSVFile.hpp>
 
+#include <BinOp.hpp>
 #include <InconsistentRowErr.hpp>
 #include <detail.hpp>
 
 #include <iostream>
 #include <fstream>
-#include <set>
 
 namespace fs = std::filesystem;
 using strsize_t = std::string::size_type;
@@ -55,19 +55,25 @@ namespace csv {
         rowCells.reserve(rowData.size());
         for (const auto& cellStr : rowData) {
             if (cellStr[0] == '=') {
-                // validate cellStr for BinOp. Validate faulty leads to csv::Cell pushing
-                // process BinOp
+                try {
+                    BinOp bOp(cellStr);
+                    bOp.Evaluate();
+                    std::unique_ptr<Cell> currCell = std::make_unique<BinOp>(bOp);
+                    rowCells.push_back(std::move(currCell));
+                    continue;
+                }
+                catch (BinOpConstructionErr& ex) {
+                    std::cout << ex.what() << std::endl;
+                }
             }
-            else {
-                std::unique_ptr<Cell> currCell = std::make_unique<Cell>(cellStr);
-                rowCells.push_back(std::move(currCell));
-            }
+            std::unique_ptr<Cell> currCell = std::make_unique<Cell>(cellStr);
+            rowCells.push_back(std::move(currCell));
         }
 
         // pushing row into the tree
         CSVRow row{ rowIndex, std::move(rowCells)};
         try {
-            //fileTree_.PushRow(std::move(row));
+            fileTree_.PushRow(std::move(row));
         }
         catch (csv::InconsistentRowErr& ex) {
             std::cout << "Warning: row with index " << rowIndex
@@ -90,6 +96,7 @@ namespace csv {
         processHeader(std::move(headerStr));
 
         // file iteration
+        size_t curRow = 0;
         while (iFile_.good()) {
             // parsing row
             std::string rowStr;
@@ -97,7 +104,8 @@ namespace csv {
             parseRow(rowStr);
 
             // writing to oFile
-            oFile << rowStr << std::endl;
+            oFile << fileTree_[curRow].ToString() << std::endl;
+            curRow++;
         }
     }
 

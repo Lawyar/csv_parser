@@ -65,6 +65,15 @@ namespace csv {
         return row_.second;
     }
 
+    std::string CSVRow::ToString() const {
+        std::string res = std::to_string(row_.first);
+        for (const auto& it : row_.second) {
+            res += ',' + it->ToString();
+        }
+
+        return res;
+    }
+
     void CSVRow::SetRowIndex(size_t newIndex) noexcept {
         row_.first = newIndex;
     }

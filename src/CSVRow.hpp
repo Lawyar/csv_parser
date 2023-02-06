@@ -33,6 +33,8 @@ namespace csv {
         [[nodiscard]] size_t RowIndex() const noexcept;
         [[nodiscard]] const std::vector<std::unique_ptr<csv::Cell>>& RowCells() const &;
 
+        std::string ToString() const;
+
         void SetRowIndex(size_t newIndex) noexcept;
 
         [[nodiscard]] size_t Size() const noexcept;

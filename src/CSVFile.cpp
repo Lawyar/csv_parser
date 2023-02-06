@@ -57,7 +57,6 @@ namespace csv {
             if (cellStr[0] == '=') {
                 try {
                     BinOp bOp(cellStr);
-                    bOp.Evaluate();
                     std::unique_ptr<Cell> currCell = std::make_unique<BinOp>(bOp);
                     rowCells.push_back(std::move(currCell));
                     continue;
